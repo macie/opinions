@@ -1,0 +1,66 @@
+package main
+
+import (
+	"context"
+	"encoding/json"
+	"io"
+	"net/http"
+	"net/url"
+	"time"
+)
+
+// HackerNewsResponse represents some interesting fields of response from
+// HN Search API.
+//
+// See: https://hn.algolia.com/api
+type HackerNewsResponse struct {
+	Hits []struct {
+		CreatedAt   time.Time `json:"created_at"`
+		Title       string    `json:"title"`
+		URL         string    `json:"url"`
+		NumComments int       `json:"num_comments"`
+		ObjectID    string    `json:"objectID"`
+	} `json:"hits"`
+}
+
+// SearchHackerNews query HN Search API for given prompt. It returns list of
+// stories which contains comments sorted by relevance, then popularity, then
+// number of comments.
+//
+// See: https://hn.algolia.com/api
+func SearchHackerNews(ctx context.Context, query string) ([]Discussion, error) {
+	// TODO: handle timeouts
+	// TODO: set User-Agent (app name + version number)
+	searchURL := "http://hn.algolia.com/api/v1/search?tags=story&query="
+	discussions := make([]Discussion, 0)
+
+	raw, err := http.Get(searchURL + url.QueryEscape(query))
+	if err != nil {
+		return discussions, err
+	}
+	defer raw.Body.Close()
+
+	body, err := io.ReadAll(raw.Body)
+	if err != nil {
+		return discussions, err
+	}
+
+	var response HackerNewsResponse
+	if err := json.Unmarshal(body, &response); err != nil {
+		return discussions, err
+	}
+
+	for _, entry := range response.Hits {
+		if entry.NumComments == 0 {
+			continue
+		}
+		discussions = append(discussions, Discussion{
+			Service: "Hacker News",
+			URL:     "https://news.ycombinator.com/item?id=" + url.QueryEscape(entry.ObjectID),
+			Title:   entry.Title,
+			Source:  entry.URL,
+		})
+	}
+
+	return discussions, nil
+}
