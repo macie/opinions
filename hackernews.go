@@ -51,14 +51,12 @@ func SearchHackerNews(ctx context.Context, query string) ([]Discussion, error) {
 	}
 
 	for _, entry := range response.Hits {
-		if entry.NumComments == 0 {
-			continue
-		}
 		discussions = append(discussions, Discussion{
-			Service: "Hacker News",
-			URL:     "https://news.ycombinator.com/item?id=" + url.QueryEscape(entry.ObjectID),
-			Title:   entry.Title,
-			Source:  entry.URL,
+			Service:  "Hacker News",
+			URL:      "https://news.ycombinator.com/item?id=" + url.QueryEscape(entry.ObjectID),
+			Title:    entry.Title,
+			Source:   entry.URL,
+			Comments: entry.NumComments,
 		})
 	}
 

@@ -6,10 +6,11 @@ import (
 
 // Discussion is a representation of discussion inside social media service.
 type Discussion struct {
-	Service string
-	URL     string
-	Title   string
-	Source  string
+	Service  string
+	URL      string
+	Title    string
+	Source   string
+	Comments int
 }
 
 // String returns string representation of discussion metadata.
