@@ -4,9 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"io"
-	"net/http"
 	"net/url"
 	"time"
+
+	"github.com/macie/opinions/http"
 )
 
 // HackerNewsResponse represents some interesting fields of response from
@@ -29,12 +30,10 @@ type HackerNewsResponse struct {
 //
 // See: https://hn.algolia.com/api
 func SearchHackerNews(ctx context.Context, query string) ([]Discussion, error) {
-	// TODO: handle timeouts
-	// TODO: set User-Agent (app name + version number)
 	searchURL := "http://hn.algolia.com/api/v1/search?tags=story&query="
 	discussions := make([]Discussion, 0)
 
-	raw, err := http.Get(searchURL + url.QueryEscape(query))
+	raw, err := http.Get(ctx, searchURL+url.QueryEscape(query))
 	if err != nil {
 		return discussions, err
 	}
