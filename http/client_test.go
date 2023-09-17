@@ -5,16 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
-)
 
-// must safeguards happy path of function call.
-func must[T any](val T, err error) T {
-	if err != nil {
-		log.Fatalf("function call returns error %v", err)
-	}
-	return val
-}
+	"github.com/macie/opinions/testing"
+)
 
 func ExampleGet() {
 	type HttpbinResponse struct {
@@ -25,13 +18,11 @@ func ExampleGet() {
 	var response HttpbinResponse
 
 	URL := "https://httpbin.org/get"
-	raw := must(Get(context.TODO(), URL))
+	raw := testing.MustReturn(Get(context.TODO(), URL))
 	defer raw.Body.Close()
 
-	body := must(io.ReadAll(raw.Body))
-	if err := json.Unmarshal(body, &response); err != nil {
-		log.Fatalf("function call returns error %v", err)
-	}
+	body := testing.MustReturn(io.ReadAll(raw.Body))
+	testing.Must(json.Unmarshal(body, &response))
 
 	fmt.Println(response.Headers.UserAgent)
 	// Output:
