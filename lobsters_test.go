@@ -4,12 +4,12 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/macie/opinions/testing"
+	"github.com/macie/opinions/ensure"
 )
 
 func ExampleSearchLobsters() {
 	query := "https://grugbrain.dev"
-	opinions := testing.MustReturn(SearchLobsters(context.TODO(), query))
+	opinions := ensure.MustReturn(SearchLobsters(context.TODO(), query))
 
 	fmt.Println(opinions[0].String())
 	// Output:

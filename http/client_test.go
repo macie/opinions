@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/macie/opinions/testing"
+	"github.com/macie/opinions/ensure"
 )
 
 func ExampleGet() {
@@ -18,11 +18,11 @@ func ExampleGet() {
 	var response HttpbinResponse
 
 	URL := "https://httpbin.org/get"
-	raw := testing.MustReturn(Get(context.TODO(), URL))
+	raw := ensure.MustReturn(Get(context.TODO(), URL))
 	defer raw.Body.Close()
 
-	body := testing.MustReturn(io.ReadAll(raw.Body))
-	testing.Must(json.Unmarshal(body, &response))
+	body := ensure.MustReturn(io.ReadAll(raw.Body))
+	ensure.Must(json.Unmarshal(body, &response))
 
 	fmt.Println(response.Headers.UserAgent)
 	// Output:

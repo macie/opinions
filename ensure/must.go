@@ -1,5 +1,5 @@
-// Package testing contains helpers for testable examples.
-package testing
+// Package ensure contains helpers for testable examples.
+package ensure
 
 import "log"
 
