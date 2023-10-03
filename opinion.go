@@ -1,4 +1,6 @@
-package main
+// Package opinions helps finding links to discussions about given topics/URLs
+// on social news websites.
+package opinions
 
 import (
 	"fmt"
