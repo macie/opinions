@@ -15,7 +15,7 @@ func main() {
 
 	err, config := parse(os.Args[1:])
 	if err != nil {
-		log.Println("invalid usage")
+		log.Printf("invalid usage: %s\n", err)
 		os.Exit(1)
 	}
 	if config.ShowVersion {

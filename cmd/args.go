@@ -3,13 +3,17 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
 	"os"
 	"os/signal"
+	"strings"
 	"time"
 )
 
+// AppConfig represets CLI parameters given by user.
 type AppConfig struct {
 	Timeout     time.Duration
+	Query       string
 	ShowVersion bool
 }
 
@@ -23,6 +27,11 @@ func parse(args []string) (error, AppConfig) {
 	if err := f.Parse(args); err != nil {
 		return err, config
 	}
+
+	if len(f.Args()) != 1 {
+		return fmt.Errorf("expected exactly 1 query but get %d: '%s'", len(f.Args()), strings.Join(f.Args(), "', '")), AppConfig{}
+	}
+	config.Query = f.Args()[0]
 
 	return nil, config
 }
