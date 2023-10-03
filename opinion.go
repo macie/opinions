@@ -14,6 +14,6 @@ type Discussion struct {
 }
 
 // String returns string representation of discussion metadata.
-func (d *Discussion) String() string {
+func (d Discussion) String() string {
 	return fmt.Sprintf("%s\t%s\t%s\t%s", d.Service, d.URL, d.Title, d.Source)
 }
