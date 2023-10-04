@@ -28,6 +28,10 @@ func parse(args []string) (error, AppConfig) {
 		return err, config
 	}
 
+	if config.ShowVersion {
+		return nil, config
+	}
+
 	if len(f.Args()) != 1 {
 		return fmt.Errorf("expected exactly 1 query but get %d: '%s'", len(f.Args()), strings.Join(f.Args(), "', '")), AppConfig{}
 	}
