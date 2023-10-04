@@ -1,11 +1,14 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
+	"sync"
 	"time"
 
+	"github.com/macie/opinions"
 	"github.com/macie/opinions/security"
 )
 
@@ -30,9 +33,43 @@ func main() {
 		os.Exit(0)
 	}
 
-	_, cancel := appContext(config)
+	ctx, cancel := appContext(config)
 	defer cancel()
 
-	fmt.Fprintln(os.Stderr, "ERROR: not implemented")
-	os.Exit(1)
+	services := []RemoteSearch{
+		opinions.SearchHackerNews,
+		opinions.SearchLobsters,
+	}
+
+	wg := new(sync.WaitGroup)
+	for _, s := range services {
+		wg.Add(1)
+		go func(searchFn RemoteSearch) {
+			defer wg.Done()
+			PrintCommented(ctx, config.Query, searchFn)
+		}(s)
+	}
+	wg.Wait()
+
+	os.Exit(0)
+}
+
+// RemoteSearch represents function for searching on social news website.
+type RemoteSearch func(context.Context, string) ([]opinions.Discussion, error)
+
+// PrintCommented prints to standard output searching results with non-zero
+// comments for given query.
+func PrintCommented(ctx context.Context, query string, search RemoteSearch) {
+	results, err := search(ctx, query)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	for _, discussion := range results {
+		if discussion.Comments == 0 {
+			continue
+		}
+		fmt.Fprintf(os.Stdout, "%s\n", discussion)
+	}
 }
