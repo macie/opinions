@@ -12,7 +12,10 @@ import (
 	"github.com/macie/opinions/security"
 )
 
-var AppVersion = time.Now().Format("2006.01.02-dev150405")
+var (
+	AppVersion        string
+	DefaultAppVersion = time.Now().Format("2006.01.02-dev150405")
+)
 
 func main() {
 	log.SetFlags(0)
@@ -29,6 +32,9 @@ func main() {
 		os.Exit(1)
 	}
 	if config.ShowVersion {
+		if AppVersion == "" {
+			AppVersion = DefaultAppVersion
+		}
 		fmt.Fprintf(os.Stderr, "opinions %s\n", AppVersion)
 		os.Exit(0)
 	}

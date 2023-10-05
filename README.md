@@ -25,6 +25,19 @@ The result is printed to stdout as rows in format: `<service_name><tab><URL><tab
 
 Websites are queried with User-Agent: `opinions/<version_number> (<os>; +https://github.com/macie/opinions)`.
 
+## Deploying
+
+> TODO: this should be declared inside `Makefile`.
+
+```sh
+CLI_VERSION="$(date '+%y.%m')"
+git tag "v${CLI_VERSION}"
+git push --tags
+git push origin
+
+GOOS=openbsd GOARCH=amd64 go build -C cmd/ -ldflags="-s -w -X main.AppVersion=$CLI_VERSION" -o "../dist/opinions-$GOARCH"_"$GOOS"
+```
+
 ## Bugs
 
 Results depends on search engines of underlying social news websites. They
