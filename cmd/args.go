@@ -46,8 +46,8 @@ func NewAppConfig(cliArgs []string, appVersion string) (AppConfig, error) {
 	return config, nil
 }
 
-// appContext creates context using AppConfig.
-func appContext(config AppConfig) (context.Context, context.CancelFunc) {
+// NewAppContext creates cancellable app context with optional timeout.
+func NewAppContext(config AppConfig) (context.Context, context.CancelFunc) {
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
 
 	if config.Timeout != 0 {

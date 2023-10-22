@@ -32,7 +32,7 @@ func main() {
 		os.Exit(0)
 	}
 
-	ctx, cancel := appContext(config)
+	ctx, cancel := NewAppContext(config)
 	defer cancel()
 
 	services := []RemoteSearch{
