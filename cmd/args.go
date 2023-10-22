@@ -10,34 +10,40 @@ import (
 	"time"
 )
 
-// AppConfig represets CLI parameters given by user.
+// AppConfig represets current app configuration.
 type AppConfig struct {
-	Timeout     time.Duration
 	Query       string
+	Timeout     time.Duration
+	Version     string
 	ShowVersion bool
 }
 
-// parse creates AppConfig from given command line arguments.
-func parse(args []string) (error, AppConfig) {
-	config := AppConfig{}
+// NewAppConfig combines command line arguments and app version into AppConfig.
+func NewAppConfig(cliArgs []string, appVersion string) (AppConfig, error) {
+	if appVersion == "" {
+		appVersion = time.Now().Format("2006.01.02-dev150405")
+	}
+	config := AppConfig{
+		Version: appVersion,
+	}
 	f := flag.NewFlagSet("opinions", flag.ContinueOnError)
 
 	f.DurationVar(&config.Timeout, "timeout", 0, "max running time. Valid time units: ns, us, ms, s, m, h")
 	f.BoolVar(&config.ShowVersion, "version", false, "version")
-	if err := f.Parse(args); err != nil {
-		return err, config
+	if err := f.Parse(cliArgs); err != nil {
+		return config, err
 	}
 
 	if config.ShowVersion {
-		return nil, config
+		return config, nil
 	}
 
 	if len(f.Args()) != 1 {
-		return fmt.Errorf("expected exactly 1 query but get %d: '%s'", len(f.Args()), strings.Join(f.Args(), "', '")), AppConfig{}
+		return AppConfig{}, fmt.Errorf("expected exactly 1 query but get %d: '%s'", len(f.Args()), strings.Join(f.Args(), "', '"))
 	}
 	config.Query = f.Args()[0]
 
-	return nil, config
+	return config, nil
 }
 
 // appContext creates context using AppConfig.

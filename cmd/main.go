@@ -6,16 +6,12 @@ import (
 	"log"
 	"os"
 	"sync"
-	"time"
 
 	"github.com/macie/opinions"
 	"github.com/macie/opinions/security"
 )
 
-var (
-	AppVersion        string
-	DefaultAppVersion = time.Now().Format("2006.01.02-dev150405")
-)
+var AppVersion string // injected during build
 
 func main() {
 	log.SetFlags(0)
@@ -26,16 +22,13 @@ func main() {
 		os.Exit(1)
 	}
 
-	err, config := parse(os.Args[1:])
+	config, err := NewAppConfig(os.Args[1:], AppVersion)
 	if err != nil {
 		log.Printf("invalid usage: %s\n", err)
 		os.Exit(1)
 	}
 	if config.ShowVersion {
-		if AppVersion == "" {
-			AppVersion = DefaultAppVersion
-		}
-		fmt.Fprintf(os.Stderr, "opinions %s\n", AppVersion)
+		fmt.Fprintf(os.Stderr, "opinions %s\n", config.Version)
 		os.Exit(0)
 	}
 
