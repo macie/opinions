@@ -25,18 +25,16 @@ The result is printed to stdout as rows in format: `<service_name><tab><URL><tab
 
 Websites are queried with User-Agent: `opinions/<version_number> (<os>; +https://github.com/macie/opinions)`.
 
-## Deploying
+## Development
 
-> TODO: this should be declared inside `Makefile`.
+Use `make` (GNU or BSD):
 
-```sh
-CLI_VERSION="$(date '+%y.%m')"
-git tag "v${CLI_VERSION}"
-git push --tags
-git push origin
-
-GOOS=openbsd GOARCH=amd64 go build -C cmd/ -ldflags="-s -w -X main.AppVersion=$CLI_VERSION" -o "../dist/opinions-$GOARCH"_"$GOOS"
-```
+- `make test` - runs test
+- `make check` - static code analysis
+- `make build` - compile binaries from latest commit for supported OSes (with [proper version number](https://go.dev/doc/modules/version-numbers))
+- `make release` - mark latest commit with choosen version tag and compile binaries for supported OSes
+- `make clean` - removes compilation artifacts
+- `make info` - print system info (useful for debugging).
 
 ## Bugs
 
