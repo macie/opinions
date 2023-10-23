@@ -17,8 +17,9 @@ func ExampleGet() {
 	}
 	var response HttpbinResponse
 
+	c := Client{buildOS: "anyOS", AppVersion: "0.0.0-local"}
 	URL := "https://httpbin.org/get"
-	raw := ensure.MustReturn(Get(context.TODO(), URL))
+	raw := ensure.MustReturn(c.Get(context.TODO(), URL))
 	defer raw.Body.Close()
 
 	body := ensure.MustReturn(io.ReadAll(raw.Body))
@@ -26,5 +27,5 @@ func ExampleGet() {
 
 	fmt.Println(response.Headers.UserAgent)
 	// Output:
-	// opinions/dev (openbsd; +https://github.com/macie/opinions)
+	// opinions/0.0.0-local (anyOS; +https://github.com/macie/opinions)
 }

@@ -8,6 +8,7 @@ import (
 	"sync"
 
 	"github.com/macie/opinions"
+	"github.com/macie/opinions/http"
 	"github.com/macie/opinions/security"
 )
 
@@ -35,6 +36,7 @@ func main() {
 	ctx, cancel := NewAppContext(config)
 	defer cancel()
 
+	client := http.Client{AppVersion: AppVersion}
 	services := []RemoteSearch{
 		opinions.SearchHackerNews,
 		opinions.SearchLobsters,
@@ -45,7 +47,14 @@ func main() {
 		wg.Add(1)
 		go func(searchFn RemoteSearch) {
 			defer wg.Done()
-			PrintCommented(ctx, config.Query, searchFn)
+
+			discussions, err := searchFn(ctx, client, config.Query)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+
+			PrintCommented(discussions)
 		}(s)
 	}
 	wg.Wait()
@@ -54,21 +63,15 @@ func main() {
 }
 
 // RemoteSearch represents function for searching on social news website.
-type RemoteSearch func(context.Context, string) ([]opinions.Discussion, error)
+type RemoteSearch func(context.Context, http.Client, string) ([]opinions.Discussion, error)
 
 // PrintCommented prints to standard output searching results with non-zero
-// comments for given query.
-func PrintCommented(ctx context.Context, query string, search RemoteSearch) {
-	results, err := search(ctx, query)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-
-	for _, discussion := range results {
-		if discussion.Comments == 0 {
+// comments for given collection.
+func PrintCommented(discussions []opinions.Discussion) {
+	for _, d := range discussions {
+		if d.Comments == 0 {
 			continue
 		}
-		fmt.Fprintf(os.Stdout, "%s\n", discussion)
+		fmt.Fprintf(os.Stdout, "%s\n", d)
 	}
 }

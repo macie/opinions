@@ -29,11 +29,11 @@ type HackerNewsResponse struct {
 // number of comments.
 //
 // See: https://hn.algolia.com/api
-func SearchHackerNews(ctx context.Context, query string) ([]Discussion, error) {
+func SearchHackerNews(ctx context.Context, client http.Client, query string) ([]Discussion, error) {
 	searchURL := "http://hn.algolia.com/api/v1/search?tags=story&query="
 	discussions := make([]Discussion, 0)
 
-	raw, err := http.Get(ctx, searchURL+url.QueryEscape(query))
+	raw, err := client.Get(ctx, searchURL+url.QueryEscape(query))
 	if err != nil {
 		return discussions, err
 	}

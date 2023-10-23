@@ -11,7 +11,7 @@ import (
 
 // SearchLobsters query lobster search engine for given prompt. It returns list
 // of stories which contains comments sorted by relevance.
-func SearchLobsters(ctx context.Context, query string) ([]Discussion, error) {
+func SearchLobsters(ctx context.Context, client http.Client, query string) ([]Discussion, error) {
 	discussions := make([]Discussion, 0)
 	searchURL := "https://lobste.rs/search?what=stories&order=relevance&q="
 
@@ -21,7 +21,7 @@ func SearchLobsters(ctx context.Context, query string) ([]Discussion, error) {
 		query = "domain:" + query
 	}
 
-	raw, err := http.Get(ctx, searchURL+url.QueryEscape(query))
+	raw, err := client.Get(ctx, searchURL+url.QueryEscape(query))
 	if err != nil {
 		return discussions, err
 	}
