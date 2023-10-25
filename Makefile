@@ -3,7 +3,7 @@
 
 # MAIN TARGETS
 
-all: test check
+all: install-dependencies
 
 clean:
 	@echo '# Delete binaries: rm -rf ./dist' >&2
@@ -32,12 +32,18 @@ build: check test
 		CURRENT_COMMIT_TAG="$$(TZ=UTC git --no-pager show --quiet --abbrev=12 --date='format-local:%Y%m%d%H%M%S' --format='%cd-%h')"; \
 		PSEUDOVERSION="$${PREV_VER_TAG:-0.0.0}-$$CURRENT_COMMIT_TAG"; \
 		VERSION="$${CURRENT_VER_TAG:-$$PSEUDOVERSION}"; \
-		GOOS=openbsd GOARCH=amd64 go build -C cmd/ -ldflags="-s -w -X main.AppVersion=$$VERSION" -o "../dist/opinions-openbsd_amd64"
+		# hardened \
+		GOOS=openbsd GOARCH=amd64 go build -C cmd/ -v -ldflags="-s -w -X main.AppVersion=$$VERSION" -o "../dist/opinions-openbsd_amd64-hardened"; \
+		# without sandbox \
 
 	@echo '# Create binaries checksum' >&2
 	@sha256sum ./dist/* >./dist/sha256sum.txt
 
 release: prepare-release build
+
+install-dependencies:
+	@echo '# Install CLI dependencies:' >&2
+	@go get -C cmd/ -v -x .
 
 prepare-release:
 	@echo '# Update local branch' >&2

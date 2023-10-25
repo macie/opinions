@@ -1,5 +1,7 @@
 # opinions
 
+[![Quality check status](https://github.com/macie/opinions/actions/workflows/check.yml/badge.svg)](https://github.com/macie/opinions/actions/workflows/check.yml)
+
 Find opinions about given phrase (also URL) on social news websites:
 _Hacker News_ and _Lobsters_. It can be used for including discussions on static
 websites/blogs.
@@ -29,6 +31,7 @@ Websites are queried with User-Agent: `opinions/<version_number> (<os>; +https:/
 
 Use `make` (GNU or BSD):
 
+- `make` - install dependencies
 - `make test` - runs test
 - `make check` - static code analysis
 - `make build` - compile binaries from latest commit for supported OSes (with [proper version number](https://go.dev/doc/modules/version-numbers))
