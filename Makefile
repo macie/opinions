@@ -34,6 +34,9 @@ build: check test
 		VERSION="$${CURRENT_VER_TAG:-$$PSEUDOVERSION}"; \
 		GOOS=openbsd GOARCH=amd64 go build -C cmd/ -ldflags="-s -w -X main.AppVersion=$$VERSION" -o "../dist/opinions-openbsd_amd64"
 
+	@echo '# Create binaries checksum' >&2
+	@sha256sum ./dist/* >./dist/sha256sum.txt
+
 release: prepare-release build
 
 prepare-release:
