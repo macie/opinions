@@ -18,8 +18,8 @@ info:
 	@go env || true
 
 check:
-	@echo '# Static analysis: go vet .' >&2
-	@go vet .
+	@echo '# Static analysis: go vet' >&2
+	@go vet -C cmd/
 	
 test:
 	@echo '# Unit tests: go test .' >&2
