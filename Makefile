@@ -33,11 +33,27 @@ build: check test
 		PSEUDOVERSION="$${PREV_VER_TAG:-0.0.0}-$$CURRENT_COMMIT_TAG"; \
 		VERSION="$${CURRENT_VER_TAG:-$$PSEUDOVERSION}"; \
 		# hardened \
-		GOOS=openbsd GOARCH=amd64 go build -C cmd/ -v -ldflags="-s -w -X main.AppVersion=$$VERSION" -o "../dist/opinions-openbsd_amd64-hardened"; \
+		GOOS=openbsd GOARCH=amd64 go build -C cmd/ -ldflags="-s -w -X main.AppVersion=$$VERSION" -o '../dist/opinions-openbsd_amd64-hardened'; \
 		# without sandbox \
+		GOOS=linux GOARCH=amd64 go build -C cmd/ -tags unsafe -ldflags="-s -w -X main.AppVersion=$$VERSION" -o '../dist/opinions-linux_amd64'; \
+		GOOS=linux GOARCH=arm go build -C cmd/ -tags unsafe -ldflags="-s -w -X main.AppVersion=$$VERSION" -o '../dist/opinions-linux_arm'; \
+		GOOS=linux GOARCH=arm64 go build -C cmd/ -tags unsafe -ldflags="-s -w -X main.AppVersion=$$VERSION" -o '../dist/opinions-linux_arm64'; \
+		GOOS=freebsd GOARCH=amd64 go build -C cmd/ -tags unsafe -ldflags="-s -w -X main.AppVersion=$$VERSION" -o '../dist/opinions-freebsd_amd64'; \
+		GOOS=windows GOARCH=amd64 go build -C cmd/ -tags unsafe -ldflags="-s -w -X main.AppVersion=$$VERSION" -o '../dist/opinions-windows_amd64.exe'; \
 
 	@echo '# Create binaries checksum' >&2
 	@sha256sum ./dist/* >./dist/sha256sum.txt
+
+unsafe: check test
+	@echo '# Create release binary without sandbox in ./dist/opinions-unsafe' >&2
+	@CURRENT_VER_TAG="$$(git tag --points-at HEAD | sed 's/^v//' | sort -t. -k 1,1n -k 2,2n -k 3,3n | tail -1)"; \
+		PREV_VER_TAG="$$(git tag | sed 's/^v//' | sort -t. -k 1,1n -k 2,2n -k 3,3n | tail -1)"; \
+		CURRENT_COMMIT_TAG="$$(TZ=UTC git --no-pager show --quiet --abbrev=12 --date='format-local:%Y%m%d%H%M%S' --format='%cd-%h')"; \
+		PSEUDOVERSION="$${PREV_VER_TAG:-0.0.0}-$$CURRENT_COMMIT_TAG"; \
+		VERSION="$${CURRENT_VER_TAG:-$$PSEUDOVERSION}"; \
+		go build -C cmd/ -tags unsafe -ldflags="-s -w -X main.AppVersion=$$VERSION" -o '../dist/opinions-unsafe'
+	@echo '# Create checksum' >&2
+	@sha256sum ./dist/opinions-unsafe >./dist/opinions-unsafe.sha256sum.txt
 
 release: prepare-release build
 

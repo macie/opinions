@@ -35,6 +35,7 @@ Use `make` (GNU or BSD):
 - `make test` - runs test
 - `make check` - static code analysis
 - `make build` - compile binaries from latest commit for supported OSes (with [proper version number](https://go.dev/doc/modules/version-numbers))
+- `make unsafe` - compile binaries from latest commit without security sandbox
 - `make release` - mark latest commit with choosen version tag and compile binaries for supported OSes
 - `make clean` - removes compilation artifacts
 - `make info` - print system info (useful for debugging).

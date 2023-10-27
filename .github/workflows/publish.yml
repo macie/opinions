@@ -43,6 +43,11 @@ jobs:
       matrix:
         include:
           - bin_name: opinions-openbsd_amd64-hardened
+          - bin_name: opinions-linux_amd64
+          - bin_name: opinions-linux_arm
+          - bin_name: opinions-linux_arm64
+          - bin_name: opinions-freebsd_amd64
+          - bin_name: opinions-windows_amd64.exe
 
     steps:
       - name: Extract build artifacts
