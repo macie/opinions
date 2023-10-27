@@ -4,7 +4,10 @@
 
 package security
 
-// Sandbox restrict access to system resources. Currently only works on OpenBSD.
+// IsHardened reports whether security sandbox is enabled.
+const IsHardened = false
+
+// Sandbox restrict access to system resources.
 func Sandbox() error {
 	return nil
 }

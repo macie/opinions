@@ -29,7 +29,7 @@ func main() {
 		os.Exit(1)
 	}
 	if config.ShowVersion {
-		fmt.Fprintf(os.Stderr, "opinions %s\n", config.Version)
+		fmt.Fprint(os.Stderr, config.Version())
 		os.Exit(0)
 	}
 

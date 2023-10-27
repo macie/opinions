@@ -8,23 +8,22 @@ import (
 	"os/signal"
 	"strings"
 	"time"
+
+	"github.com/macie/opinions/security"
 )
 
 // AppConfig represets current app configuration.
 type AppConfig struct {
+	appVersion  string
 	Query       string
 	Timeout     time.Duration
-	Version     string
 	ShowVersion bool
 }
 
 // NewAppConfig combines command line arguments and app version into AppConfig.
 func NewAppConfig(cliArgs []string, appVersion string) (AppConfig, error) {
-	if appVersion == "" {
-		appVersion = time.Now().Format("2006.01.02-dev150405")
-	}
 	config := AppConfig{
-		Version: appVersion,
+		appVersion: appVersion,
 	}
 	f := flag.NewFlagSet("opinions", flag.ContinueOnError)
 
@@ -44,6 +43,19 @@ func NewAppConfig(cliArgs []string, appVersion string) (AppConfig, error) {
 	config.Query = f.Args()[0]
 
 	return config, nil
+}
+
+// Version returns string with full version description.
+func (c *AppConfig) Version() string {
+	ver := c.appVersion
+	if ver == "" {
+		ver = time.Now().Format("2006.01.02-dev150405")
+	}
+	build := ""
+	if security.IsHardened {
+		build = " (hardened)"
+	}
+	return fmt.Sprintf("opinions %s%s\n", ver, build)
 }
 
 // NewAppContext creates cancellable app context with optional timeout.
