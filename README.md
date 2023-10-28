@@ -12,7 +12,7 @@ It directly calls search engines on underlying websites.
 Application is developed with security-first approach:
 
 - functionality is limited by design
-- access to the OS is restricted by application-level sandboxing (currently OpenBSD only).
+- access to the OS is restricted by application-level sandboxing (with [pledge](https://man.openbsd.org/pledge.2) and [seccomp](https://en.wikipedia.org/wiki/Seccomp)).
 
 ## Usage
 
@@ -54,14 +54,11 @@ may be different than expected.
 
 ## TODO
 
-Add [sandboxing](https://learnbchs.org/pledge.html) for other OSes:
-
-- Linux: [seccomp](https://en.wikipedia.org/wiki/Seccomp) (see:
-<https://github.com/stephane-martin/skewer/blob/master/sys/scomp/seccomp.go> and
-<https://blog.heroku.com/applying-seccomp-filters-on-go-binaries>)
-- FreeBSD: [Capsicum](https://en.wikipedia.org/wiki/Capsicum_(Unix)) (see:
+- add [sandboxing](https://learnbchs.org/pledge.html) for FreeBSD (with
+[Capsicum](https://en.wikipedia.org/wiki/Capsicum_(Unix)) - see:
 <https://reviews.freebsd.org/rS308432> and
-<https://cgit.freebsd.org/src/tree/lib/libcapsicum/capsicum_helpers.h?id=d66f9c86fa3fd8d8f0a56ea96b03ca11f2fac1fb#n104>)
+<https://cgit.freebsd.org/src/tree/lib/libcapsicum/capsicum_helpers.h?id=d66f9c86fa3fd8d8f0a56ea96b03ca11f2fac1fb#n104>))
+- verify hardened version of linux arm and arm64.
 
 ## License
 

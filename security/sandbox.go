@@ -1,6 +1,6 @@
 // Package security contains OS specific mitigation mechanisms.
 
-//go:build !openbsd && !unsafe
+//go:build !(linux && amd64) && !openbsd && !unsafe
 
 package security
 
