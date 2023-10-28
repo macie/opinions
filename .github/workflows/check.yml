@@ -9,6 +9,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Setup OS
+        uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: libseccomp2 libseccomp-dev
       
       - name: Setup Go
         uses: actions/setup-go@v4
@@ -28,6 +33,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
+      - name: Setup OS
+        uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: libseccomp2 libseccomp-dev
+
       - name: Setup Go
         uses: actions/setup-go@v4
         with:
