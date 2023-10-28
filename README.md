@@ -27,6 +27,13 @@ The result is printed to stdout as rows in format: `<service_name><tab><URL><tab
 
 Websites are queried with User-Agent: `opinions/<version_number> (<os>; +https://github.com/macie/opinions)`.
 
+## Installation
+
+Download [latest stable release from GitHub](https://github.com/macie/opinions/releases/latest) .
+
+You can also build it manually with commands: `make && make build` (or without
+sandboxing: `make && make unsafe`).
+
 ## Development
 
 Use `make` (GNU or BSD):
