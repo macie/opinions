@@ -21,20 +21,20 @@ func SearchLobsters(ctx context.Context, client http.Client, query string) ([]Di
 		query = "domain:" + query
 	}
 
-	raw, err := client.Get(ctx, searchURL+url.QueryEscape(query))
+	r, err := client.Get(ctx, searchURL+url.QueryEscape(query))
 	if err != nil {
 		return discussions, err
 	}
-	defer raw.Body.Close()
+	defer r.Body.Close()
 
-	doc, err := html.Parse(raw.Body)
+	body, err := html.Parse(r.Body)
 	if err != nil {
 		return discussions, err
 	}
 
-	for _, d := range html.FindAll(doc, "ol > li") {
-		srcNode := html.First(d, ".link > a")
-		commentNode := html.First(d, ".mobile_comments")
+	for _, listItem := range html.FindAll(body, "ol > li") {
+		srcNode := html.First(listItem, ".link > a")
+		commentNode := html.First(listItem, ".mobile_comments")
 		comments, err := strconv.Atoi(html.Text(html.First(commentNode, "span")))
 		if err != nil {
 			comments = 0

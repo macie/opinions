@@ -33,13 +33,13 @@ func SearchHackerNews(ctx context.Context, client http.Client, query string) ([]
 	searchURL := "http://hn.algolia.com/api/v1/search?tags=story&query="
 	discussions := make([]Discussion, 0)
 
-	raw, err := client.Get(ctx, searchURL+url.QueryEscape(query))
+	r, err := client.Get(ctx, searchURL+url.QueryEscape(query))
 	if err != nil {
 		return discussions, err
 	}
-	defer raw.Body.Close()
+	defer r.Body.Close()
 
-	body, err := io.ReadAll(raw.Body)
+	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		return discussions, err
 	}
