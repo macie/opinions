@@ -2,6 +2,7 @@ package opinions
 
 import (
 	"context"
+	"fmt"
 	"net/url"
 	"strconv"
 
@@ -26,6 +27,10 @@ func SearchLobsters(ctx context.Context, client http.Client, query string) ([]Di
 		return discussions, err
 	}
 	defer r.Body.Close()
+
+	if r.StatusCode != http.StatusOK {
+		return discussions, fmt.Errorf("cannot search Lobsters: status code %d", r.StatusCode)
+	}
 
 	body, err := html.Parse(r.Body)
 	if err != nil {

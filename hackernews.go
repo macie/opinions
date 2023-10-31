@@ -3,6 +3,7 @@ package opinions
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/url"
 	"time"
@@ -37,6 +38,10 @@ func SearchHackerNews(ctx context.Context, client http.Client, query string) ([]
 		return discussions, err
 	}
 	defer r.Body.Close()
+
+	if r.StatusCode != http.StatusOK {
+		return discussions, fmt.Errorf("cannot search Hacker News: status code %d", r.StatusCode)
+	}
 
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
