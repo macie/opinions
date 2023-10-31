@@ -9,8 +9,8 @@ import (
 	"github.com/macie/opinions/http"
 )
 
-// SearchLobsters query lobster search engine for given prompt. It returns list
-// of stories which contains comments sorted by relevance.
+// SearchLobsters query Lobsters search engine for given prompt. It returns list
+// of discussions sorted by relevance.
 func SearchLobsters(ctx context.Context, client http.Client, query string) ([]Discussion, error) {
 	discussions := make([]Discussion, 0)
 	searchURL := "https://lobste.rs/search?what=stories&order=relevance&q="

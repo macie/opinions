@@ -25,8 +25,7 @@ type HackerNewsResponse struct {
 }
 
 // SearchHackerNews query HN Search API for given prompt. It returns list of
-// stories which contains comments sorted by relevance, then popularity, then
-// number of comments.
+// discussions sorted by relevance, then popularity, then number of comments.
 //
 // See: https://hn.algolia.com/api
 func SearchHackerNews(ctx context.Context, client http.Client, query string) ([]Discussion, error) {
