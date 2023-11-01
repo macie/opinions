@@ -39,6 +39,7 @@ func main() {
 	client := http.Client{AppVersion: AppVersion}
 	services := []RemoteSearch{
 		opinions.SearchHackerNews,
+		opinions.SearchLemmy,
 		opinions.SearchLobsters,
 	}
 

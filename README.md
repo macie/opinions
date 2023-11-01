@@ -3,8 +3,12 @@
 [![Quality check status](https://github.com/macie/opinions/actions/workflows/check.yml/badge.svg)](https://github.com/macie/opinions/actions/workflows/check.yml)
 
 Find opinions about given phrase (also URL) on social news websites:
-_Hacker News_ and _Lobsters_. It can be used for including discussions on static
-websites/blogs.
+
+- _[Lemmy](https://en.wikipedia.org/wiki/Lemmy_(social_network))_
+- _[Lobsters](https://lobste.rs/about)_
+- _[Hacker News](https://en.wikipedia.org/wiki/Hacker_News)_.
+
+It can be used for including discussions on static websites/blogs.
 
 _opinions_ is command-line replacement of [discu.eu](https://discu.eu/) service.
 It directly calls search engines on underlying websites.
@@ -18,9 +22,13 @@ Application is developed with security-first approach:
 
 ```sh
 $ opinions 'https://grugbrain.dev'
+Lemmy	https://lemmy.world/post/5189937	The Grug Brained Developer - A layman's guide to thinking like the self-aware smol brained	https://grugbrain.dev/
+Lemmy	https://lemmy.world/post/750451	The Grug Brained Developer	https://grugbrain.dev/
+Lemmy	https://lemmy.world/post/685510	The Grug Brained Developer	https://grugbrain.dev/
+Hacker News	https://news.ycombinator.com/item?id=31840331	The Grug Brained Developer	https://grugbrain.dev/
+Hacker News	https://news.ycombinator.com/item?id=38076886	The Grug Brained Developer (2022)	https://grugbrain.dev/
 Lobsters	https://lobste.rs/s/ifaar4/grug_brained_developer	The Grug Brained Developer	https://grugbrain.dev/
 Lobsters	https://lobste.rs/s/pmpc9v/grug_brained_developer	The Grug Brained Developer	http://grugbrain.dev
-Hacker News	https://news.ycombinator.com/item?id=31840331	The Grug Brained Developer	https://grugbrain.dev/
 ```
 
 The result is printed to stdout as rows in format: `<service_name><tab><URL><tab><title><tab><source_domain>`.
