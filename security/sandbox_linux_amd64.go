@@ -24,7 +24,7 @@ func Sandbox() error {
 		// similar to stdio pledge
 		"clone3", "close", "epoll_create1", "epoll_ctl", "epoll_pwait",
 		"exit_group", "fcntl", "fstat", "futex", "getpid", "getrandom",
-		"getsockopt", "gettid", "mmap", "mprotect", "munmap", "nanosleep",
+		"getsockopt", "gettid", "madvise", "mmap", "mprotect", "munmap", "nanosleep",
 		"pipe2", "read", "rseq", "rt_sigprocmask", "rt_sigreturn",
 		"sched_getaffinity", "sched_yield", "set_robust_list", "setsockopt",
 		"sigaltstack", "tgkill", "uname", "write",
