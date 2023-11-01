@@ -29,7 +29,7 @@ func SearchLobsters(ctx context.Context, client http.Client, query string) ([]Di
 	defer r.Body.Close()
 
 	if r.StatusCode != http.StatusOK {
-		return discussions, fmt.Errorf("cannot search Lobsters: status code %d", r.StatusCode)
+		return discussions, fmt.Errorf("cannot search Lobsters: `GET %s` responded with status code %d", r.Request.URL, r.StatusCode)
 	}
 
 	body, err := html.Parse(r.Body)
