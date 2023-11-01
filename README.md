@@ -8,7 +8,7 @@ Find opinions about given phrase (also URL) on social news websites:
 - _[Lobsters](https://lobste.rs/about)_
 - _[Hacker News](https://en.wikipedia.org/wiki/Hacker_News)_.
 
-It can be used for including discussions on static websites/blogs.
+It can be used for [including discussions on static websites/blogs](#static-site-generators).
 
 _opinions_ is command-line replacement of [discu.eu](https://discu.eu/) service.
 It directly calls search engines on underlying websites.
@@ -34,6 +34,21 @@ Lobsters	https://lobste.rs/s/pmpc9v/grug_brained_developer	The Grug Brained Deve
 The result is printed to stdout as rows in format: `<service_name><tab><URL><tab><title><tab><source_domain>`.
 
 Websites are queried with User-Agent: `opinions/<version_number> (<os>; +https://github.com/macie/opinions)`.
+
+### Static Site Generators
+
+_opinions_ can be used to extend static websites with comments-like feature. You
+can search for active discussions about your article, filter out false positive
+results (eg. get only articles from your domain) and generate HTML links with
+standard Unix commands:
+
+```sh
+opinions 'Grug Brained' | grep 'grugbrain.dev' | awk -F '\t' '
+BEGIN { print "<ul>" }
+{ print "  <li><a href=\""$2"\" title=\"["$1"] "$3"\">"$1"</a></li>" }
+END { print "</ul>" }
+'
+```
 
 ## Installation
 
