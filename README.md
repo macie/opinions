@@ -2,19 +2,19 @@
 
 [![Quality check status](https://github.com/macie/opinions/actions/workflows/check.yml/badge.svg)](https://github.com/macie/opinions/actions/workflows/check.yml)
 
-Find opinions about given phrase (also URL) on social news websites:
+Find opinions about a given phrase (also URL) on social news websites:
 
 - _[Lemmy](https://en.wikipedia.org/wiki/Lemmy_(social_network))_
 - _[Lobsters](https://lobste.rs/about)_
 - _[Hacker News](https://en.wikipedia.org/wiki/Hacker_News)_
 - _[Reddit](https://en.wikipedia.org/wiki/Reddit)_.
 
-It can be used for [including discussions on static websites/blogs](#static-site-generators).
+It can be used to [include discussions on static websites/blogs](#static-site-generators).
 
-_opinions_ is command-line replacement of [discu.eu](https://discu.eu/) service.
+_opinions_ is a command-line replacement of [discu.eu](https://discu.eu/) service.
 It directly calls search engines on underlying websites.
 
-Application is developed with security-first approach:
+Application is developed with a security-first approach:
 
 - functionality is limited by design
 - access to the OS is restricted by application-level sandboxing (with [pledge](https://man.openbsd.org/pledge.2) and [seccomp](https://en.wikipedia.org/wiki/Seccomp)).
@@ -75,7 +75,7 @@ Use `make` (GNU or BSD):
 
 ## Bugs
 
-Results depends on search engines of underlying social news websites. They
+Results depend on search engines of underlying social news websites. They
 may be different than expected.
 
 ## TODO
