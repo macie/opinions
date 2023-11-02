@@ -41,6 +41,7 @@ func main() {
 		opinions.SearchHackerNews,
 		opinions.SearchLemmy,
 		opinions.SearchLobsters,
+		opinions.SearchReddit,
 	}
 
 	wg := new(sync.WaitGroup)

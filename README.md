@@ -6,7 +6,8 @@ Find opinions about given phrase (also URL) on social news websites:
 
 - _[Lemmy](https://en.wikipedia.org/wiki/Lemmy_(social_network))_
 - _[Lobsters](https://lobste.rs/about)_
-- _[Hacker News](https://en.wikipedia.org/wiki/Hacker_News)_.
+- _[Hacker News](https://en.wikipedia.org/wiki/Hacker_News)_
+- _[Reddit](https://en.wikipedia.org/wiki/Reddit)_.
 
 It can be used for [including discussions on static websites/blogs](#static-site-generators).
 
@@ -29,6 +30,8 @@ Hacker News	https://news.ycombinator.com/item?id=31840331	The Grug Brained Devel
 Hacker News	https://news.ycombinator.com/item?id=38076886	The Grug Brained Developer (2022)	https://grugbrain.dev/
 Lobsters	https://lobste.rs/s/ifaar4/grug_brained_developer	The Grug Brained Developer	https://grugbrain.dev/
 Lobsters	https://lobste.rs/s/pmpc9v/grug_brained_developer	The Grug Brained Developer	http://grugbrain.dev
+Reddit	https://reddit.com/r/programming/comments/16gt8w4/the_grug_brained_developer/	The grug brained developer	https://grugbrain.dev
+Reddit	https://reddit.com/r/brdev/comments/14jhm17/the_grug_brained_developer/	The Grug Brained Developer	https://grugbrain.dev
 ```
 
 The result is printed to stdout as rows in format: `<service_name><tab><URL><tab><title><tab><source_domain>`.
