@@ -1,5 +1,9 @@
 name: Quality check
-on: [push, pull_request]
+on:
+  push:
+    branches:
+    - "*"
+  pull_request:
 
 jobs:
   static-analysis:
@@ -46,4 +50,4 @@ jobs:
       - name: Install dependencies
         run: make
 
-      - run: make check
+      - run: make test
