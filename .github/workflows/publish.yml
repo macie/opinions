@@ -36,42 +36,10 @@ jobs:
           retention-days: 14
           if-no-files-found: error
 
-  publish-binaries:
+  release:
     needs: build
 
-    name: Publish
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    permissions:
-      contents: write
-    strategy:
-      matrix:
-        include:
-          - bin_name: opinions-openbsd_amd64-hardened
-          - bin_name: opinions-linux_amd64-hardened
-          - bin_name: opinions-linux_arm
-          - bin_name: opinions-linux_arm64
-          - bin_name: opinions-freebsd_amd64
-          - bin_name: opinions-windows_amd64.exe
-
-    steps:
-      - name: Extract build artifacts
-        uses: actions/download-artifact@v3
-        with:
-          name: binaries
-
-      - name: Add binaries to release
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ${{ matrix.bin_name }}
-          asset_name: ${{ matrix.bin_name }}
-          tag: ${{ github.ref }}
-
-  publish-checksums:
-    needs: build
-
-    name: Publish checksums
+    name: Release
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
@@ -83,10 +51,10 @@ jobs:
         with:
           name: binaries
 
-      - name: Add checksums to release
-        uses: svenstaro/upload-release-action@v2
+      - name: Prepare release
+        uses: ncipollo/release-action@v1
         with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: sha256sum.txt
-          asset_name: sha256sum.txt
-          tag: ${{ github.ref }}
+          allowUpdates: true
+          generateReleaseNotes: true
+          artifacts: "*"
+          artifactErrorsFailBuild: true
