@@ -25,7 +25,7 @@ test:
 	@echo '# Unit tests: go test .' >&2
 	@go test .
 
-build: check test
+dist: *.go
 	@echo '# Create release binaries in ./dist' >&2
 	@CURRENT_VER_TAG="$$(git tag --points-at HEAD | sed 's/^v//' | sort -t. -k 1,1n -k 2,2n -k 3,3n | tail -1)"; \
 		PREV_VER_TAG="$$(git tag | sed 's/^v//' | sort -t. -k 1,1n -k 2,2n -k 3,3n | tail -1)"; \
@@ -44,7 +44,7 @@ build: check test
 	@echo '# Create binaries checksum' >&2
 	@sha256sum ./dist/* >./dist/sha256sum.txt
 
-unsafe: check test
+unsafe: *.go
 	@echo '# Create release binary without sandbox in ./dist/opinions-unsafe' >&2
 	@CURRENT_VER_TAG="$$(git tag --points-at HEAD | sed 's/^v//' | sort -t. -k 1,1n -k 2,2n -k 3,3n | tail -1)"; \
 		PREV_VER_TAG="$$(git tag | sed 's/^v//' | sort -t. -k 1,1n -k 2,2n -k 3,3n | tail -1)"; \
@@ -55,13 +55,11 @@ unsafe: check test
 	@echo '# Create checksum' >&2
 	@sha256sum ./dist/opinions-unsafe >./dist/opinions-unsafe.sha256sum.txt
 
-release: prepare-release build
-
 install-dependencies:
 	@echo '# Install CLI dependencies:' >&2
 	@go get -C cmd/ -v -x .
 
-prepare-release:
+cli-release: check test
 	@echo '# Update local branch' >&2
 	@git pull --rebase
 	@echo '# Create new release tag' >&2

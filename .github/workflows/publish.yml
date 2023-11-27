@@ -26,7 +26,7 @@ jobs:
       - name: Install dependencies
         run: make
 
-      - run: make build
+      - run: make dist
 
       - name: Save build artifacts
         uses: actions/upload-artifact@v3
