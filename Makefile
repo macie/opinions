@@ -25,6 +25,26 @@ test:
 	@echo '# Unit tests: go test .' >&2
 	@go test .
 
+build: *.go
+	@echo '# Create release binary: ./dist/opinions' >&2
+	@CURRENT_VER_TAG="$$(git tag --points-at HEAD | sed 's/^v//' | sort -t. -k 1,1n -k 2,2n -k 3,3n | tail -1)"; \
+		PREV_VER_TAG="$$(git tag | sed 's/^v//' | sort -t. -k 1,1n -k 2,2n -k 3,3n | tail -1)"; \
+		CURRENT_COMMIT_TAG="$$(TZ=UTC git --no-pager show --quiet --abbrev=12 --date='format-local:%Y%m%d%H%M%S' --format='%cd-%h')"; \
+		PSEUDOVERSION="$${PREV_VER_TAG:-0.0.0}-$$CURRENT_COMMIT_TAG"; \
+		VERSION="$${CURRENT_VER_TAG:-$$PSEUDOVERSION}"; \
+		go build -C cmd/ -ldflags="-s -w -X main.AppVersion=$$VERSION" -o '../dist/opinions'
+
+unsafe: *.go
+	@echo '# Create release binary without sandbox in ./dist/opinions-unsafe' >&2
+	@CURRENT_VER_TAG="$$(git tag --points-at HEAD | sed 's/^v//' | sort -t. -k 1,1n -k 2,2n -k 3,3n | tail -1)"; \
+		PREV_VER_TAG="$$(git tag | sed 's/^v//' | sort -t. -k 1,1n -k 2,2n -k 3,3n | tail -1)"; \
+		CURRENT_COMMIT_TAG="$$(TZ=UTC git --no-pager show --quiet --abbrev=12 --date='format-local:%Y%m%d%H%M%S' --format='%cd-%h')"; \
+		PSEUDOVERSION="$${PREV_VER_TAG:-0.0.0}-$$CURRENT_COMMIT_TAG"; \
+		VERSION="$${CURRENT_VER_TAG:-$$PSEUDOVERSION}"; \
+		go build -C cmd/ -tags unsafe -ldflags="-s -w -X main.AppVersion=$$VERSION" -o '../dist/opinions-unsafe'
+	@echo '# Create checksum' >&2
+	@sha256sum ./dist/opinions-unsafe >./dist/opinions-unsafe.sha256sum.txt
+
 dist: *.go
 	@echo '# Create release binaries in ./dist' >&2
 	@CURRENT_VER_TAG="$$(git tag --points-at HEAD | sed 's/^v//' | sort -t. -k 1,1n -k 2,2n -k 3,3n | tail -1)"; \
@@ -43,17 +63,6 @@ dist: *.go
 
 	@echo '# Create binaries checksum' >&2
 	@sha256sum ./dist/* >./dist/sha256sum.txt
-
-unsafe: *.go
-	@echo '# Create release binary without sandbox in ./dist/opinions-unsafe' >&2
-	@CURRENT_VER_TAG="$$(git tag --points-at HEAD | sed 's/^v//' | sort -t. -k 1,1n -k 2,2n -k 3,3n | tail -1)"; \
-		PREV_VER_TAG="$$(git tag | sed 's/^v//' | sort -t. -k 1,1n -k 2,2n -k 3,3n | tail -1)"; \
-		CURRENT_COMMIT_TAG="$$(TZ=UTC git --no-pager show --quiet --abbrev=12 --date='format-local:%Y%m%d%H%M%S' --format='%cd-%h')"; \
-		PSEUDOVERSION="$${PREV_VER_TAG:-0.0.0}-$$CURRENT_COMMIT_TAG"; \
-		VERSION="$${CURRENT_VER_TAG:-$$PSEUDOVERSION}"; \
-		go build -C cmd/ -tags unsafe -ldflags="-s -w -X main.AppVersion=$$VERSION" -o '../dist/opinions-unsafe'
-	@echo '# Create checksum' >&2
-	@sha256sum ./dist/opinions-unsafe >./dist/opinions-unsafe.sha256sum.txt
 
 install-dependencies:
 	@echo '# Install CLI dependencies:' >&2

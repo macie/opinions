@@ -67,8 +67,9 @@ Use `make` (GNU or BSD):
 - `make` - install dependencies
 - `make test` - runs test
 - `make check` - static code analysis
+- `make build` - compile binary from latest commit
+- `make unsafe` - compile binary from latest commit without security sandbox
 - `make dist` - compile binaries from latest commit for supported OSes (with [proper version number](https://go.dev/doc/modules/version-numbers))
-- `make unsafe` - compile binaries from latest commit without security sandbox
 - `make clean` - removes compilation artifacts
 - `make cli-release` - tag latest commit as a new release of CLI
 - `make info` - print system info (useful for debugging).
