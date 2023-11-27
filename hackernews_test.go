@@ -10,7 +10,7 @@ import (
 
 func ExampleSearchHackerNews() {
 	client := http.Client{}
-	query := "grugbrain.dev"
+	query := "https://grugbrain.dev"
 
 	opinions := ensure.MustReturn(SearchHackerNews(context.TODO(), client, query))
 

@@ -30,8 +30,16 @@ type HackerNewsResponse struct {
 //
 // See: https://hn.algolia.com/api
 func SearchHackerNews(ctx context.Context, client http.Client, query string) ([]Discussion, error) {
-	searchURL := "http://hn.algolia.com/api/v1/search?tags=story&query="
+	searchURL := "http://hn.algolia.com/api/v1/search?"
 	discussions := make([]Discussion, 0)
+
+	_, err := url.Parse(query)
+	switch {
+	case err == nil:
+		searchURL += "restrictSearchableAttributes=url&query="
+	default:
+		searchURL += "tags=story&query="
+	}
 
 	r, err := client.Get(ctx, searchURL+url.QueryEscape(query))
 	if err != nil {
