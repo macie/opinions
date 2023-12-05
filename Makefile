@@ -42,8 +42,6 @@ unsafe: *.go
 		PSEUDOVERSION="$${PREV_VER_TAG:-0.0.0}-$$CURRENT_COMMIT_TAG"; \
 		VERSION="$${CURRENT_VER_TAG:-$$PSEUDOVERSION}"; \
 		go build -C cmd/ -tags unsafe -ldflags="-s -w -X main.AppVersion=$$VERSION" -o '../dist/opinions-unsafe'
-	@echo '# Create checksum' >&2
-	@sha256sum ./dist/opinions-unsafe >./dist/opinions-unsafe.sha256sum.txt
 
 dist: *.go
 	@echo '# Create release binaries in ./dist' >&2
@@ -62,7 +60,7 @@ dist: *.go
 		GOOS=windows GOARCH=amd64 go build -C cmd/ -tags unsafe -ldflags="-s -w -X main.AppVersion=$$VERSION" -o '../dist/opinions-windows_amd64.exe'; \
 
 	@echo '# Create binaries checksum' >&2
-	@sha256sum ./dist/* >./dist/sha256sum.txt
+	@cd ./dist; sha256sum * >sha256sum.txt
 
 install-dependencies:
 	@echo '# Install CLI dependencies:' >&2
