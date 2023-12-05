@@ -18,3 +18,14 @@ func ExampleSearchHackerNews() {
 	// Output:
 	// Hacker News	https://news.ycombinator.com/item?id=31840331	The Grug Brained Developer	https://grugbrain.dev/
 }
+
+func ExampleSearchHackerNews_unknown() {
+	client := http.Client{}
+	query := "https://invalid.domain/query"
+
+	opinions := ensure.MustReturn(SearchHackerNews(context.TODO(), client, query))
+
+	fmt.Println(len(opinions))
+	// Output:
+	// 0
+}

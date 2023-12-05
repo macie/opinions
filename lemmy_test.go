@@ -18,3 +18,14 @@ func ExampleSearchLemmy() {
 	// Output:
 	// Lemmy	https://lemmy.world/post/7563451	The Grug Brained Developer (2022)	https://grugbrain.dev/
 }
+
+func ExampleSearchLemmy_unknown() {
+	client := http.Client{}
+	query := "https://invalid.domain/query"
+
+	opinions := ensure.MustReturn(SearchLemmy(context.TODO(), client, query))
+
+	fmt.Println(len(opinions))
+	// Output:
+	// 0
+}

@@ -18,3 +18,14 @@ func ExampleSearchLobsters() {
 	// Output:
 	// Lobsters	https://lobste.rs/s/ifaar4/grug_brained_developer	The Grug Brained Developer	https://grugbrain.dev/
 }
+
+func ExampleSearchLobsters_unknown() {
+	client := http.Client{}
+	query := "https://invalid.domain/query"
+
+	opinions := ensure.MustReturn(SearchLobsters(context.TODO(), client, query))
+
+	fmt.Println(len(opinions))
+	// Output:
+	// 0
+}
