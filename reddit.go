@@ -23,6 +23,19 @@ type RedditResponse struct {
 	} `json:"data"`
 }
 
+// UnmarshalJSON deserialize inconsistent JSON responses to RedditResponse.
+// Reddit returns empty object ("{}") when there are no search results.
+func (r *RedditResponse) UnmarshalJSON(b []byte) error {
+	isEmptyResponse := len(b) == 4 && string(b) == "\"{}\""
+	if isEmptyResponse {
+		return nil
+	}
+
+	// new type prevents recursive calls to RedditResponse.UnmarshalJSON()
+	type resp *RedditResponse
+	return json.Unmarshal(b, resp(r))
+}
+
 // SearchReddit searches Reddit for given query and returns list of discussions
 // sorted by relevance.
 //
