@@ -25,6 +25,14 @@ test:
 	@echo '# Unit tests: go test .' >&2
 	@go test .
 
+e2e:
+	@echo '# E2E tests of ./dist/opinions' >&2
+	@printf 'Hacker News\nLemmy\nLobsters\nReddit\n' >test_case.grugbrain
+	@printf '' >test_case.unknown
+	./dist/opinions --version
+	./dist/opinions --timeout 10s 'https://grugbrain.dev' | cut -d'	' -f1 | sort -u | diff test_case.grugbrain -
+	./dist/opinions --timeout 8500ms 'zażółćjaźńgęślą' | diff test_case.unknown -
+
 build: *.go
 	@echo '# Create release binary: ./dist/opinions' >&2
 	@CURRENT_VER_TAG="$$(git tag --points-at HEAD | sed 's/^v//' | sort -t. -k 1,1n -k 2,2n -k 3,3n | tail -1)"; \
