@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io"
 
 	"github.com/macie/opinions/ensure"
 )
@@ -22,8 +21,7 @@ func ExampleGet() {
 	raw := ensure.MustReturn(c.Get(context.TODO(), URL))
 	defer raw.Body.Close()
 
-	body := ensure.MustReturn(io.ReadAll(raw.Body))
-	ensure.Must(json.Unmarshal(body, &response))
+	ensure.Must(json.NewDecoder(raw.Body).Decode(&response))
 
 	fmt.Println(response.Headers.UserAgent)
 	// Output:

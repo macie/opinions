@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/url"
 
 	"github.com/macie/opinions/http"
@@ -46,13 +45,8 @@ func SearchReddit(ctx context.Context, client http.Client, query string) ([]Disc
 		return discussions, fmt.Errorf("cannot search Reddit: `GET %s` responded with status code %d", r.Request.URL, r.StatusCode)
 	}
 
-	body, err := io.ReadAll(r.Body)
-	if err != nil {
-		return discussions, err
-	}
-
 	var response RedditResponse
-	if err := json.Unmarshal(body, &response); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&response); err != nil {
 		return discussions, err
 	}
 

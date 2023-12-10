@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/url"
 	"time"
 
@@ -51,13 +50,8 @@ func SearchHackerNews(ctx context.Context, client http.Client, query string) ([]
 		return discussions, fmt.Errorf("cannot search Hacker News: `GET %s` responded with status code %d", r.Request.URL, r.StatusCode)
 	}
 
-	body, err := io.ReadAll(r.Body)
-	if err != nil {
-		return discussions, err
-	}
-
 	var response HackerNewsResponse
-	if err := json.Unmarshal(body, &response); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&response); err != nil {
 		return discussions, err
 	}
 

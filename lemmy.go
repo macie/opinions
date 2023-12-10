@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/url"
 	"strings"
 
@@ -59,13 +58,8 @@ func SearchLemmy(ctx context.Context, client http.Client, query string) ([]Discu
 		return discussions, fmt.Errorf("cannot search Lemmy: `GET %s` responded with status code %d", r.Request.URL, r.StatusCode)
 	}
 
-	body, err := io.ReadAll(r.Body)
-	if err != nil {
-		return discussions, err
-	}
-
 	var response LemmyResponse
-	if err := json.Unmarshal(body, &response); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&response); err != nil {
 		return discussions, err
 	}
 
