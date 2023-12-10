@@ -62,7 +62,7 @@ dist: *.go
 		GOOS=openbsd GOARCH=amd64 go build -C cmd/ -ldflags="-s -w -X main.AppVersion=$$VERSION" -o '../dist/opinions-openbsd_amd64-hardened'; \
 		GOOS=linux GOARCH=amd64 go build -C cmd/ -ldflags="-s -w -X main.AppVersion=$$VERSION" -o '../dist/opinions-linux_amd64-hardened'; \
 		# without sandbox \
-		GOOS=linux GOARCH=arm go build -C cmd/ -tags unsafe -ldflags="-s -w -X main.AppVersion=$$VERSION" -o '../dist/opinions-linux_arm'; \
+		GOOS=linux GOARCH=arm GOARM=7 go build -C cmd/ -tags unsafe -ldflags="-s -w -X main.AppVersion=$$VERSION" -o '../dist/opinions-linux_armv7'; \
 		GOOS=linux GOARCH=arm64 go build -C cmd/ -tags unsafe -ldflags="-s -w -X main.AppVersion=$$VERSION" -o '../dist/opinions-linux_arm64'; \
 		GOOS=freebsd GOARCH=amd64 go build -C cmd/ -tags unsafe -ldflags="-s -w -X main.AppVersion=$$VERSION" -o '../dist/opinions-freebsd_amd64'; \
 		GOOS=windows GOARCH=amd64 go build -C cmd/ -tags unsafe -ldflags="-s -w -X main.AppVersion=$$VERSION" -o '../dist/opinions-windows_amd64.exe'; \
