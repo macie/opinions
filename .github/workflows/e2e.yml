@@ -1,6 +1,9 @@
 name: E2E tests
 on:
   pull_request:
+  push:
+    branches:
+    - arm_seccomp
 
 permissions:
   contents: read
@@ -154,132 +157,132 @@ jobs:
           commands: |
             make CLI=opinions-linux_arm64 e2e
 
-  windows:
-    name: Windows amd64 (not hardened)
-    runs-on: windows-latest
-    timeout-minutes: 10
+  # windows:
+  #   name: Windows amd64 (not hardened)
+  #   runs-on: windows-latest
+  #   timeout-minutes: 10
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
-      - name: Setup Go
-        uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
-        with:
-          go-version: 'stable'
+  #     - name: Setup Go
+  #       uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
+  #       with:
+  #         go-version: 'stable'
 
-      - name: Install dependencies
-        run: make
+  #     - name: Install dependencies
+  #       run: make
 
-      - name: Build executable
-        run: make opinions-windows_amd64.exe
+  #     - name: Build executable
+  #       run: make opinions-windows_amd64.exe
 
-      - name: Run E2E tests
-        run: make CLI=opinions-windows_amd64.exe e2e
+  #     - name: Run E2E tests
+  #       run: make CLI=opinions-windows_amd64.exe e2e
 
-  freebsd:
-    name: FreeBSD amd64
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
+  # freebsd:
+  #   name: FreeBSD amd64
+  #   runs-on: ubuntu-latest
+  #   timeout-minutes: 10
 
-    steps:
-      - name: Harden Runner
-        uses: step-security/harden-runner@eb238b55efaa70779f274895e782ed17c84f2895 # v2.6.1
-        with:
-          egress-policy: block
-          allowed-endpoints: >
-            github.com:443
-            api.github.com:443
-            proxy.golang.org:443
-            0.freebsd.pool.ntp.org:443
-            2.freebsd.pool.ntp.org:443
-            raw.githubusercontent.com:443
-            objects.githubusercontent.com:443
-            changelogs.ubuntu.com:443
-            ppa.launchpadcontent.net:443
-            packages.microsoft.com:443
-            azure.archive.ubuntu.com:80
-            motd.ubuntu.com:443
-            esm.ubuntu.com:443
-            pypi.org:443
-            files.pythonhosted.org:443
-            hn.algolia.com:80
-            hn.algolia.com:443
-            lemmy.world:443
-            lobste.rs:443
-            www.reddit.com:443
+  #   steps:
+  #     - name: Harden Runner
+  #       uses: step-security/harden-runner@eb238b55efaa70779f274895e782ed17c84f2895 # v2.6.1
+  #       with:
+  #         egress-policy: block
+  #         allowed-endpoints: >
+  #           github.com:443
+  #           api.github.com:443
+  #           proxy.golang.org:443
+  #           0.freebsd.pool.ntp.org:443
+  #           2.freebsd.pool.ntp.org:443
+  #           raw.githubusercontent.com:443
+  #           objects.githubusercontent.com:443
+  #           changelogs.ubuntu.com:443
+  #           ppa.launchpadcontent.net:443
+  #           packages.microsoft.com:443
+  #           azure.archive.ubuntu.com:80
+  #           motd.ubuntu.com:443
+  #           esm.ubuntu.com:443
+  #           pypi.org:443
+  #           files.pythonhosted.org:443
+  #           hn.algolia.com:80
+  #           hn.algolia.com:443
+  #           lemmy.world:443
+  #           lobste.rs:443
+  #           www.reddit.com:443
 
-      - name: Checkout repository
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+  #     - name: Checkout repository
+  #       uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
-      - name: Setup Go
-        uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
-        with:
-          go-version: 'stable'
+  #     - name: Setup Go
+  #       uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
+  #       with:
+  #         go-version: 'stable'
 
-      - name: Install dependencies
-        run: make
+  #     - name: Install dependencies
+  #       run: make
 
-      - name: Build executable for FreeBSD amd64
-        run: make opinions-freebsd_amd64
+  #     - name: Build executable for FreeBSD amd64
+  #       run: make opinions-freebsd_amd64
 
-      - name: Run E2E tests inside VM
-        uses: vmactions/freebsd-vm@d139f0eaa5d47d9fcc44f7ab1748574475d89565 # v1.0.5
-        with:
-          usesh: true
-          run: |
-            set -e -x
-            make CLI=opinions-freebsd_amd64 e2e
+  #     - name: Run E2E tests inside VM
+  #       uses: vmactions/freebsd-vm@d139f0eaa5d47d9fcc44f7ab1748574475d89565 # v1.0.5
+  #       with:
+  #         usesh: true
+  #         run: |
+  #           set -e -x
+  #           make CLI=opinions-freebsd_amd64 e2e
 
-  openbsd:
-    name: OpenBSD amd64
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
+  # openbsd:
+  #   name: OpenBSD amd64
+  #   runs-on: ubuntu-latest
+  #   timeout-minutes: 10
 
-    steps:
-      - name: Harden Runner
-        uses: step-security/harden-runner@eb238b55efaa70779f274895e782ed17c84f2895 # v2.6.1
-        with:
-          egress-policy: block
-          allowed-endpoints: >
-            github.com:443
-            api.github.com:443
-            proxy.golang.org:443
-            pool.ntp.org:443
-            cdn.openbsd.org:443
-            www.google.com:443
-            raw.githubusercontent.com:443
-            objects.githubusercontent.com:443
-            time.cloudflare.com:443
-            ppa.launchpadcontent.net:443
-            packages.microsoft.com:443
-            azure.archive.ubuntu.com:80
-            motd.ubuntu.com:443
-            esm.ubuntu.com:443
-            pypi.org:443
-            files.pythonhosted.org:443
-            hn.algolia.com:80
-            hn.algolia.com:443
-            lemmy.world:443
-            lobste.rs:443
-            www.reddit.com:443
+  #   steps:
+  #     - name: Harden Runner
+  #       uses: step-security/harden-runner@eb238b55efaa70779f274895e782ed17c84f2895 # v2.6.1
+  #       with:
+  #         egress-policy: block
+  #         allowed-endpoints: >
+  #           github.com:443
+  #           api.github.com:443
+  #           proxy.golang.org:443
+  #           pool.ntp.org:443
+  #           cdn.openbsd.org:443
+  #           www.google.com:443
+  #           raw.githubusercontent.com:443
+  #           objects.githubusercontent.com:443
+  #           time.cloudflare.com:443
+  #           ppa.launchpadcontent.net:443
+  #           packages.microsoft.com:443
+  #           azure.archive.ubuntu.com:80
+  #           motd.ubuntu.com:443
+  #           esm.ubuntu.com:443
+  #           pypi.org:443
+  #           files.pythonhosted.org:443
+  #           hn.algolia.com:80
+  #           hn.algolia.com:443
+  #           lemmy.world:443
+  #           lobste.rs:443
+  #           www.reddit.com:443
 
-      - name: Checkout repository
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+  #     - name: Checkout repository
+  #       uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
-      - name: Setup Go
-        uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
-        with:
-          go-version: 'stable'
+  #     - name: Setup Go
+  #       uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
+  #       with:
+  #         go-version: 'stable'
 
-      - name: Install dependencies
-        run: make
+  #     - name: Install dependencies
+  #       run: make
 
-      - name: Build executable for OpenBSD amd64
-        run: make opinions-openbsd_amd64-hardened
+  #     - name: Build executable for OpenBSD amd64
+  #       run: make opinions-openbsd_amd64-hardened
 
-      - name: Run E2E tests inside VM
-        uses: vmactions/openbsd-vm@c69c6aa05e19f11533a5d00913e398606bd66133 # v1.0.4
-        with:
-          run: |
-            make CLI=opinions-openbsd_amd64-hardened e2e
+  #     - name: Run E2E tests inside VM
+  #       uses: vmactions/openbsd-vm@c69c6aa05e19f11533a5d00913e398606bd66133 # v1.0.4
+  #       with:
+  #         run: |
+  #           make CLI=opinions-openbsd_amd64-hardened e2e

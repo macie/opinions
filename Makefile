@@ -86,7 +86,9 @@ unsafe:
 
 .PHONY: dist
 dist: opinions-freebsd_amd64 \
- opinions-linux_amd64-hardened opinions-linux_armv7 opinions-linux_arm64 \
+ opinions-linux_amd64-hardened \
+ opinions-linux_armv7-hardened \
+ opinions-linux_arm64-hardened \
  opinions-openbsd_amd64-hardened \
  opinions-windows_amd64.exe
 
@@ -113,7 +115,9 @@ cli-release: check test
 
 # this force using `go build` to changes detection in Go project (instead of `make`)
 .PHONY: opinions-freebsd_amd64 \
- opinions-linux_amd64-hardened opinions-linux_armv7 opinions-linux_arm64 \
+ opinions-linux_amd64-hardened \
+ opinions-linux_armv7-hardened \
+ opinions-linux_arm64-hardened \
  opinions-openbsd_amd64-hardened \
  opinions-windows_amd64.exe
 
@@ -123,11 +127,17 @@ opinions-freebsd_amd64:
 opinions-linux_amd64-hardened:
 	GOOS=linux GOARCH=amd64 $(MAKE) CLI=$@ build
 
-opinions-linux_armv7:
-	GOOS=linux GOARCH=arm GOARM=7 $(MAKE) CLI=$@ unsafe
+opinions-linux_armv7-hardened:
+	# FIXME: cross-compilation needs manual compilation of libseccomp:
+	#     - libseccomp compilation: <https://github.com/seccomp/libseccomp-golang/blob/main/seccomp_internal.go>
+	#     - linking compiled libseccomp: <https://github.com/seccomp/libseccomp-golang/blob/main/.github/workflows/test.yml>
+	GOOS=linux GOARCH=arm GOARM=7 CGO_ENABLED=1 CC=arm-linux-gnueabi-gcc $(MAKE) CLI=$@ build
 
-opinions-linux_arm64:
-	GOOS=linux GOARCH=arm64 $(MAKE) CLI=$@ unsafe
+opinions-linux_arm64-hardened:
+	# NOTE: cross-compilation needs manual compilation of libseccomp
+	#     - libseccomp compilation: <https://github.com/seccomp/libseccomp-golang/blob/main/seccomp_internal.go>
+	#     - linking compiled libseccomp: <https://github.com/seccomp/libseccomp-golang/blob/main/.github/workflows/test.yml>
+	GOOS=linux GOARCH=arm64 CGO_ENABLED=1 CC=arm-linux-gnueabihf-gcc $(MAKE) CLI=$@ build
 
 opinions-openbsd_amd64-hardened:
 	GOOS=openbsd GOARCH=amd64 $(MAKE) CLI=$@ build
