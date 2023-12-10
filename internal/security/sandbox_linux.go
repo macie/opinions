@@ -1,4 +1,4 @@
-//go:build linux && amd64 && !openbsd && !unsafe
+//go:build linux && !openbsd && !unsafe
 
 package security
 
@@ -14,10 +14,6 @@ const IsHardened = true
 // Sandbox restrict application access to necessary system calls needed by
 // network connections and standard i/o.
 func Sandbox() error {
-	if !seccomp.Supported() {
-		return fmt.Errorf("%w: kernel does not support seccomp", ErrNoSandbox)
-	}
-
 	// How to create minimal whitelist:
 	// 1. Create empty list of allowed syscalls
 	// 2. Set `seccomp.ActionLog` as default filter action

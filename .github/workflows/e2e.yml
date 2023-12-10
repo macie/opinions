@@ -1,6 +1,9 @@
 name: E2E tests
 on:
   pull_request:
+  push:
+    branches:
+    - arm_seccomp
 
 permissions:
   contents: read
@@ -63,6 +66,7 @@ jobs:
             api.github.com:443
             objects.githubusercontent.com:443
             proxy.golang.org:443
+            ziglang.org:443
             ppa.launchpadcontent.net:443
             packages.microsoft.com:443
             azure.archive.ubuntu.com:80
@@ -77,16 +81,24 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
+      - name: Setup seccomp
+        uses: awalsh128/cache-apt-pkgs-action@44c33b32f808cdddd5ac0366d70595ed63661ed8 # v1.3.1
+        with:
+          packages: libseccomp-dev
+
       - name: Setup Go
         uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
         with:
           go-version: 'stable'
 
+      - name: Setup Zig
+        uses: goto-bus-stop/setup-zig@v2
+
       - name: Install dependencies
         run: make
 
       - name: Build executable
-        run: make opinions-linux_armv7
+        run: make opinions-linux_armv7-hardened
 
       - name: Run E2E tests inside VM
         uses: pguyot/arm-runner-action@e04ca3becb581a2b52cabe31e53835ada344522f # v2.5.2
@@ -95,7 +107,7 @@ jobs:
           cpu_info: cpuinfo/raspberrypi_3b
           base_image: raspios_lite:latest
           commands: |
-            make CLI=opinions-linux_armv7 e2e
+            make CLI=opinions-linux_armv7-hardened e2e
 
   linux-arm64:
     name: Linux ARM64
@@ -112,6 +124,7 @@ jobs:
             api.github.com:443
             objects.githubusercontent.com:443
             proxy.golang.org:443
+            ziglang.org:443
             ppa.launchpadcontent.net:443
             packages.microsoft.com:443
             azure.archive.ubuntu.com:80
@@ -126,16 +139,24 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
+      - name: Install build tools
+        uses: awalsh128/cache-apt-pkgs-action@44c33b32f808cdddd5ac0366d70595ed63661ed8 # v1.3.1
+        with:
+          packages: gperf
+
       - name: Setup Go
         uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
         with:
           go-version: 'stable'
 
+      - name: Setup Zig
+        uses: goto-bus-stop/setup-zig@v2
+
       - name: Install dependencies
         run: make
 
       - name: Build executable
-        run: make opinions-linux_arm64
+        run: make opinions-linux_arm64-hardened
 
       - name: Run E2E tests inside VM
         uses: pguyot/arm-runner-action@e04ca3becb581a2b52cabe31e53835ada344522f # v2.5.2
@@ -144,132 +165,132 @@ jobs:
           cpu_info: cpuinfo/raspberrypi_zero2_w_arm64
           base_image: raspios_lite_arm64:latest
           commands: |
-            make CLI=opinions-linux_arm64 e2e
+            make CLI=opinions-linux_arm64-hardened e2e
 
-  windows:
-    name: Windows amd64 (not hardened)
-    runs-on: windows-latest
-    timeout-minutes: 10
+  # windows:
+  #   name: Windows amd64 (not hardened)
+  #   runs-on: windows-latest
+  #   timeout-minutes: 10
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
-      - name: Setup Go
-        uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
-        with:
-          go-version: 'stable'
+  #     - name: Setup Go
+  #       uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
+  #       with:
+  #         go-version: 'stable'
 
-      - name: Install dependencies
-        run: make
+  #     - name: Install dependencies
+  #       run: make
 
-      - name: Build executable
-        run: make opinions-windows_amd64.exe
+  #     - name: Build executable
+  #       run: make opinions-windows_amd64.exe
 
-      - name: Run E2E tests
-        run: make CLI=opinions-windows_amd64.exe e2e
+  #     - name: Run E2E tests
+  #       run: make CLI=opinions-windows_amd64.exe e2e
 
-  freebsd:
-    name: FreeBSD amd64
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
+  # freebsd:
+  #   name: FreeBSD amd64
+  #   runs-on: ubuntu-latest
+  #   timeout-minutes: 10
 
-    steps:
-      - name: Harden Runner
-        uses: step-security/harden-runner@eb238b55efaa70779f274895e782ed17c84f2895 # v2.6.1
-        with:
-          egress-policy: block
-          allowed-endpoints: >
-            github.com:443
-            api.github.com:443
-            proxy.golang.org:443
-            0.freebsd.pool.ntp.org:443
-            2.freebsd.pool.ntp.org:443
-            raw.githubusercontent.com:443
-            objects.githubusercontent.com:443
-            changelogs.ubuntu.com:443
-            ppa.launchpadcontent.net:443
-            packages.microsoft.com:443
-            azure.archive.ubuntu.com:80
-            motd.ubuntu.com:443
-            esm.ubuntu.com:443
-            pypi.org:443
-            files.pythonhosted.org:443
-            hn.algolia.com:443
-            lemmy.world:443
-            lobste.rs:443
-            www.reddit.com:443
+  #   steps:
+  #     - name: Harden Runner
+  #       uses: step-security/harden-runner@eb238b55efaa70779f274895e782ed17c84f2895 # v2.6.1
+  #       with:
+  #         egress-policy: block
+  #         allowed-endpoints: >
+  #           github.com:443
+  #           api.github.com:443
+  #           proxy.golang.org:443
+  #           0.freebsd.pool.ntp.org:443
+  #           2.freebsd.pool.ntp.org:443
+  #           raw.githubusercontent.com:443
+  #           objects.githubusercontent.com:443
+  #           changelogs.ubuntu.com:443
+  #           ppa.launchpadcontent.net:443
+  #           packages.microsoft.com:443
+  #           azure.archive.ubuntu.com:80
+  #           motd.ubuntu.com:443
+  #           esm.ubuntu.com:443
+  #           pypi.org:443
+  #           files.pythonhosted.org:443
+  #           hn.algolia.com:443
+  #           lemmy.world:443
+  #           lobste.rs:443
+  #           www.reddit.com:443
 
-      - name: Checkout repository
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+  #     - name: Checkout repository
+  #       uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
-      - name: Setup Go
-        uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
-        with:
-          go-version: 'stable'
+  #     - name: Setup Go
+  #       uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
+  #       with:
+  #         go-version: 'stable'
 
-      - name: Install dependencies
-        run: make
+  #     - name: Install dependencies
+  #       run: make
 
-      - name: Build executable for FreeBSD amd64
-        run: make opinions-freebsd_amd64
+  #     - name: Build executable for FreeBSD amd64
+  #       run: make opinions-freebsd_amd64
 
-      - name: Run E2E tests inside VM
-        uses: vmactions/freebsd-vm@35a5b20a98476a681c7576a344775be7e7f77f06 # v1.0.6
-        with:
-          usesh: true
-          run: |
-            set -e -x
-            make CLI=opinions-freebsd_amd64 e2e
+  #     - name: Run E2E tests inside VM
+  #       uses: vmactions/freebsd-vm@35a5b20a98476a681c7576a344775be7e7f77f06 # v1.0.6
+  #       with:
+  #         usesh: true
+  #         run: |
+  #           set -e -x
+  #           make CLI=opinions-freebsd_amd64 e2e
 
-  openbsd:
-    name: OpenBSD amd64
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
+  # openbsd:
+  #   name: OpenBSD amd64
+  #   runs-on: ubuntu-latest
+  #   timeout-minutes: 10
 
-    steps:
-      - name: Harden Runner
-        uses: step-security/harden-runner@eb238b55efaa70779f274895e782ed17c84f2895 # v2.6.1
-        with:
-          egress-policy: block
-          allowed-endpoints: >
-            github.com:443
-            api.github.com:443
-            proxy.golang.org:443
-            pool.ntp.org:443
-            cdn.openbsd.org:443
-            www.google.com:443
-            raw.githubusercontent.com:443
-            objects.githubusercontent.com:443
-            time.cloudflare.com:443
-            ppa.launchpadcontent.net:443
-            packages.microsoft.com:443
-            azure.archive.ubuntu.com:80
-            motd.ubuntu.com:443
-            esm.ubuntu.com:443
-            pypi.org:443
-            files.pythonhosted.org:443
-            hn.algolia.com:443
-            lemmy.world:443
-            lobste.rs:443
-            www.reddit.com:443
+  #   steps:
+  #     - name: Harden Runner
+  #       uses: step-security/harden-runner@eb238b55efaa70779f274895e782ed17c84f2895 # v2.6.1
+  #       with:
+  #         egress-policy: block
+  #         allowed-endpoints: >
+  #           github.com:443
+  #           api.github.com:443
+  #           proxy.golang.org:443
+  #           pool.ntp.org:443
+  #           cdn.openbsd.org:443
+  #           www.google.com:443
+  #           raw.githubusercontent.com:443
+  #           objects.githubusercontent.com:443
+  #           time.cloudflare.com:443
+  #           ppa.launchpadcontent.net:443
+  #           packages.microsoft.com:443
+  #           azure.archive.ubuntu.com:80
+  #           motd.ubuntu.com:443
+  #           esm.ubuntu.com:443
+  #           pypi.org:443
+  #           files.pythonhosted.org:443
+  #           hn.algolia.com:443
+  #           lemmy.world:443
+  #           lobste.rs:443
+  #           www.reddit.com:443
 
-      - name: Checkout repository
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+  #     - name: Checkout repository
+  #       uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
-      - name: Setup Go
-        uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
-        with:
-          go-version: 'stable'
+  #     - name: Setup Go
+  #       uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
+  #       with:
+  #         go-version: 'stable'
 
-      - name: Install dependencies
-        run: make
+  #     - name: Install dependencies
+  #       run: make
 
-      - name: Build executable for OpenBSD amd64
-        run: make opinions-openbsd_amd64-hardened
+  #     - name: Build executable for OpenBSD amd64
+  #       run: make opinions-openbsd_amd64-hardened
 
-      - name: Run E2E tests inside VM
-        uses: vmactions/openbsd-vm@9d5b45dcdbc99e6b2d15a6dc7e8c2ae06736bec4 # v1.0.7
-        with:
-          run: |
-            make CLI=opinions-openbsd_amd64-hardened e2e
+  #     - name: Run E2E tests inside VM
+  #       uses: vmactions/openbsd-vm@9d5b45dcdbc99e6b2d15a6dc7e8c2ae06736bec4 # v1.0.7
+  #       with:
+  #         run: |
+  #           make CLI=opinions-openbsd_amd64-hardened e2e

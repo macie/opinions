@@ -23,10 +23,20 @@ GO      = go
 GOFLAGS = 
 LDFLAGS = -ldflags "-s -w -X main.AppVersion=$(VERSION)"
 
+LIBSECCOMP_VER  = 2.5.5
+LIBSECCOMP_HASH = 248a2c8a4d9b9858aa6baf52712c34afefcf9c9e94b76dce02c1c9aa25fb3375
+ZCC     = zig cc
+ZAR     = zig ar
+ZLD     = zig ld
+ZRANLIB = zig ranlib
+
 
 #
 # INTERNAL MACROS
 #
+
+LIBSECCOMP_DIR        = /tmp/seccomp
+LIBSECCOMP_PREFIX     = $(LIBSECCOMP_DIR)/usr
 
 CLI_CURRENT_VER_TAG   = $$(git tag --points-at HEAD | grep "^cli" | sed 's/^cli\/v//' | sort -t. -k 1,1n -k 2,2n -k 3,3n | tail -1)
 CLI_LATEST_VERSION    = $$(git tag | grep "^cli" | sed 's/^cli\/v//' | sort -t. -k 1,1n -k 2,2n -k 3,3n | tail -1)
@@ -44,8 +54,11 @@ all: install-dependencies
 
 .PHONY: clean
 clean:
-	@echo '# Delete bulid directory' >&2
-	rm -rf $(DESTDIR)
+	@echo '# Delete bulid directories' >&2
+	rm -rf $(DESTDIR) $(LIBSECCOMP_DIR)
+	@echo '# Delete libseccomp artifacts' >&2
+	# rm libseccomp-$(LIBSECCOMP_VER).tar.gz
+	rm libseccomp-*.a
 
 .PHONY: info
 info:
@@ -89,7 +102,9 @@ unsafe:
 
 .PHONY: dist
 dist: opinions-freebsd_amd64 \
- opinions-linux_amd64-hardened opinions-linux_armv7 opinions-linux_arm64 \
+ opinions-linux_amd64-hardened \
+ opinions-linux_armv7-hardened \
+ opinions-linux_arm64-hardened \
  opinions-openbsd_amd64-hardened \
  opinions-windows_amd64.exe
 
@@ -125,7 +140,9 @@ module-release: check test
 
 # this force using `go build` to changes detection in Go project (instead of `make`)
 .PHONY: opinions-freebsd_amd64 \
- opinions-linux_amd64-hardened opinions-linux_armv7 opinions-linux_arm64 \
+ opinions-linux_amd64-hardened \
+ opinions-linux_armv7-hardened \
+ opinions-linux_arm64-hardened \
  opinions-openbsd_amd64-hardened \
  opinions-windows_amd64.exe
 
@@ -135,14 +152,45 @@ opinions-freebsd_amd64:
 opinions-linux_amd64-hardened:
 	GOOS=linux GOARCH=amd64 $(MAKE) CLI=$@ build
 
-opinions-linux_armv7:
-	GOOS=linux GOARCH=arm GOARM=7 $(MAKE) CLI=$@ unsafe
+opinions-linux_armv7-hardened:
+	# FIXME: cross-compilation needs manual compilation of libseccomp:
+	#     - libseccomp compilation: <https://github.com/seccomp/libseccomp-golang/blob/main/seccomp_internal.go>
+	#     - linking compiled libseccomp: <https://github.com/seccomp/libseccomp-golang/blob/main/.github/workflows/test.yml>
+	# GOOS=linux GOARCH=arm GOARM=7 CGO_ENABLED=1 CC="$(ZCC) -target arm-linux-musleabi" $(MAKE) CLI=$@ build
+	GOOS=linux GOARCH=arm GOARM=7 $(MAKE) CLI=$@ build
 
-opinions-linux_arm64:
-	GOOS=linux GOARCH=arm64 $(MAKE) CLI=$@ unsafe
+# opinions-linux_arm64-hardened: libseccomp-aarch64.a
+# 	GOOS=linux GOARCH=arm64 CGO_ENABLED=1 CC="$(ZCC) -target aarch64-linux-musl" PKG_CONFIG_PATH="/tmp/seccomp/usr/lib/pkgconfig/" $(MAKE) CLI=$@ build
+
+opinions-linux_arm64-hardened:
+	GOOS=linux GOARCH=arm64 $(MAKE) CLI=$@ build
 
 opinions-openbsd_amd64-hardened:
 	GOOS=openbsd GOARCH=amd64 $(MAKE) CLI=$@ build
 
 opinions-windows_amd64.exe:
 	GOOS=windows GOARCH=amd64 $(MAKE) CLI=$@ unsafe
+
+
+#
+# DEPENDENCIES
+#
+
+libseccomp-$(LIBSECCOMP_VER).tar.gz:
+	@echo '# Download libseccomp sources' >&2
+	wget -q 'https://github.com/seccomp/libseccomp/releases/download/v$(LIBSECCOMP_VER)/libseccomp-$(LIBSECCOMP_VER).tar.gz'
+	@if [ "$$(sha256sum libseccomp-$(LIBSECCOMP_VER).tar.gz | cut -d' ' -f1)" != "$(LIBSECCOMP_HASH)" ]; then \
+		echo "Checksum mismatch: $$(sha256sum libseccomp-$(LIBSECCOMP_VER).tar.gz | cut -d' ' -f1) != $(LIBSECCOMP_HASH)" >&2; \
+		echo "# Delete libseccomp-$(LIBSECCOMP_VER).tar.gz" >&2; \
+		rm libseccomp-$(LIBSECCOMP_VER).tar.gz; \
+		exit 1; \
+	fi
+
+libseccomp-%.a: libseccomp-$(LIBSECCOMP_VER).tar.gz
+	@echo '# Build libseccomp' >&2
+	mkdir -p $(LIBSECCOMP_DIR)
+	cp libseccomp-$(LIBSECCOMP_VER).tar.gz $(LIBSECCOMP_DIR)
+	cd $(LIBSECCOMP_DIR); tar -xzf libseccomp-$(LIBSECCOMP_VER).tar.gz
+	cd $(LIBSECCOMP_DIR)/libseccomp-$(LIBSECCOMP_VER) ; \
+		AR="$(ZAR)" CC="$(ZCC)" CFLAGS="-target $*-linux-musl -static" RANLIB="$(ZRANLIB)" LD="$(ZLD)" ./configure --prefix=/tmp/seccomp/usr --host amd64-pc-linux --build $*-pc-linux && make && make install
+	cp $(LIBSECCOMP_PREFIX)/lib/libseccomp.a $@

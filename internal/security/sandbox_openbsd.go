@@ -1,4 +1,4 @@
-//go:build openbsd && !(linux && amd64) && !unsafe
+//go:build openbsd && !linux && !unsafe
 
 package security
 
