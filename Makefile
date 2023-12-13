@@ -79,25 +79,18 @@ e2e:
 build:
 	@echo '# Build CLI executable: $(DESTDIR)/$(CLI)' >&2
 	$(GO) build -C $(CLIDIR) $(GOFLAGS) $(LDFLAGS) -o '../../$(DESTDIR)/$(CLI)'
+	@echo '# Add executable checksum to: $(DESTDIR)/sha256sum.txt' >&2
+	cd $(DESTDIR); sha256sum $(CLI) >> sha256sum.txt
 
 .PHONY: unsafe
 unsafe:
 	@$(MAKE) GOFLAGS='-tags=unsafe' build
 
 .PHONY: dist
-dist:
-	@echo '# Create CLI executables in $(DESTDIR)' >&2
-	# hardened
-	GOOS=openbsd GOARCH=amd64 $(GO) build -C $(CLIDIR) $(GOFLAGS) $(LDFLAGS) -o '../../$(DESTDIR)/opinions-openbsd_amd64-hardened'
-	GOOS=linux GOARCH=amd64 $(GO) build -C $(CLIDIR) $(GOFLAGS) $(LDFLAGS) -o '../../$(DESTDIR)/opinions-linux_amd64-hardened'
-	# without sandbox
-	GOFLAGS='-tags=unsafe' GOOS=linux GOARCH=arm GOARM=7 $(GO) build -C $(CLIDIR) $(GOFLAGS) $(LDFLAGS) -o '../../$(DESTDIR)/opinions-linux_armv7'
-	GOFLAGS='-tags=unsafe' GOOS=linux GOARCH=arm64 $(GO) build -C $(CLIDIR) $(GOFLAGS) $(LDFLAGS) -o '../../$(DESTDIR)/opinions-linux_arm64'
-	GOFLAGS='-tags=unsafe' GOOS=freebsd GOARCH=amd64 $(GO) build -C $(CLIDIR) $(GOFLAGS) $(LDFLAGS) -o '../../$(DESTDIR)/opinions-freebsd_amd64'
-	GOFLAGS='-tags=unsafe' GOOS=windows GOARCH=amd64 $(GO) build -C $(CLIDIR) $(GOFLAGS) $(LDFLAGS) -o '../../$(DESTDIR)/opinions-windows_amd64.exe'
-
-	@echo '# Create checksums' >&2
-	@cd $(DESTDIR); sha256sum * >sha256sum.txt
+dist: opinions-freebsd_amd64 \
+ opinions-linux_amd64-hardened opinions-linux_armv7 opinions-linux_arm64 \
+ opinions-openbsd_amd64-hardened \
+ opinions-windows_amd64.exe
 
 .PHONY: install-dependencies
 install-dependencies:
@@ -114,3 +107,32 @@ cli-release: check test
 		echo "New tag: $${NEW_VERSION}"
 		git tag "v$$NEW_VERSION"; \
 		git push --tags
+
+
+#
+# SUPPORTED EXECUTABLES
+#
+
+# this force using `go build` to changes detection in Go project (instead of `make`)
+.PHONY: opinions-freebsd_amd64 \
+ opinions-linux_amd64-hardened opinions-linux_armv7 opinions-linux_arm64 \
+ opinions-openbsd_amd64-hardened \
+ opinions-windows_amd64.exe
+
+opinions-freebsd_amd64:
+	GOOS=freebsd GOARCH=amd64 $(MAKE) CLI=$@ unsafe
+
+opinions-linux_amd64-hardened:
+	GOOS=linux GOARCH=amd64 $(MAKE) CLI=$@ build
+
+opinions-linux_armv7:
+	GOOS=linux GOARCH=arm GOARM=7 $(MAKE) CLI=$@ unsafe
+
+opinions-linux_arm64:
+	GOOS=linux GOARCH=arm64 $(MAKE) CLI=$@ unsafe
+
+opinions-openbsd_amd64-hardened:
+	GOOS=openbsd GOARCH=amd64 $(MAKE) CLI=$@ build
+
+opinions-windows_amd64.exe:
+	GOOS=windows GOARCH=amd64 $(MAKE) CLI=$@ unsafe

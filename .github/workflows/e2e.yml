@@ -49,9 +49,10 @@ jobs:
         run: make
 
       - name: Build executable
-        run: make build
+        run: make opinions-linux_amd64-hardened
 
-      - run: make e2e
+      - name: Run E2E tests
+        run: make CLI=opinions-linux_amd64-hardened e2e
 
   linux-arm:
     name: Linux ARMv7
@@ -92,7 +93,7 @@ jobs:
         run: make
 
       - name: Build executable
-        run: GOOS=linux GOARCH=arm GOARM=7 make unsafe
+        run: make opinions-linux_armv7
 
       - name: Run E2E tests inside VM
         uses: pguyot/arm-runner-action@e04ca3becb581a2b52cabe31e53835ada344522f # v2.5.2
@@ -101,7 +102,7 @@ jobs:
           cpu_info: cpuinfo/raspberrypi_3b
           base_image: raspios_lite:latest
           commands: |
-            make e2e
+            make CLI=opinions-linux_armv7 e2e
 
   linux-arm64:
     name: Linux ARM64
@@ -142,7 +143,7 @@ jobs:
         run: make
 
       - name: Build executable
-        run: GOOS=linux GOARCH=arm64 make unsafe
+        run: make opinions-linux_arm64
 
       - name: Run E2E tests inside VM
         uses: pguyot/arm-runner-action@e04ca3becb581a2b52cabe31e53835ada344522f # v2.5.2
@@ -151,7 +152,7 @@ jobs:
           cpu_info: cpuinfo/raspberrypi_zero2_w_arm64
           base_image: raspios_lite_arm64:latest
           commands: |
-            make e2e
+            make CLI=opinions-linux_arm64 e2e
 
   windows:
     name: Windows amd64 (not hardened)
@@ -171,9 +172,10 @@ jobs:
         run: make
 
       - name: Build executable
-        run: make unsafe
+        run: make opinions-windows_amd64.exe
 
-      - run: make e2e
+      - name: Run E2E tests
+        run: make CLI=opinions-windows_amd64.exe e2e
 
   freebsd:
     name: FreeBSD amd64
@@ -219,7 +221,7 @@ jobs:
         run: make
 
       - name: Build executable for FreeBSD amd64
-        run: GOOS=freebsd GOARCH=amd64 make unsafe
+        run: make opinions-freebsd_amd64
 
       - name: Run E2E tests inside VM
         uses: vmactions/freebsd-vm@d139f0eaa5d47d9fcc44f7ab1748574475d89565 # v1.0.5
@@ -227,7 +229,7 @@ jobs:
           usesh: true
           run: |
             set -e -x
-            make e2e
+            make CLI=opinions-freebsd_amd64 e2e
 
   openbsd:
     name: OpenBSD amd64
@@ -274,10 +276,10 @@ jobs:
         run: make
 
       - name: Build executable for OpenBSD amd64
-        run: GOOS=openbsd GOARCH=amd64 make build
+        run: make opinions-openbsd_amd64-hardened
 
       - name: Run E2E tests inside VM
         uses: vmactions/openbsd-vm@7bfcccb9cf1fa7a1f2f1b7e7718e0d68e70643ac # v1.0.6
         with:
           run: |
-            make e2e
+            make CLI=opinions-openbsd_amd64-hardened e2e
