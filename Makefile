@@ -1,3 +1,13 @@
+# This Makefile intended to be POSIX-compliant (2018 edition with .PHONY target).
+#
+# .PHONY targets are used by:
+#  - task definintions
+#  - compilation of Go code (force usage of `go build` to changes detection).
+#
+# More info:
+#  - docs: <https://pubs.opengroup.org/onlinepubs/9699919799/utilities/make.html>
+#  - .PHONY: <https://www.austingroupbugs.net/view.php?id=523>
+#
 .POSIX:
 .SUFFIXES:
 
@@ -28,12 +38,15 @@ VERSION         = $$(VER="$(CURRENT_VER_TAG)"; echo "$${VER:-$(PSEUDOVERSION)}")
 # DEVELOPMENT TASKS
 #
 
+.PHONY: all
 all: install-dependencies
 
+.PHONY: clean
 clean:
 	@echo '# Delete bulid directory' >&2
 	rm -rf $(DESTDIR)
 
+.PHONY: info
 info:
 	@printf '# OS info: '
 	@uname -rsv;
@@ -42,14 +55,17 @@ info:
 	@echo '# Go environment variables:'
 	@$(GO) env || true
 
+.PHONY: check
 check:
 	@echo '# Static analysis' >&2
 	$(GO) vet -C $(CLIDIR)
-	
+
+.PHONY: test
 test:
 	@echo '# Unit tests' >&2
 	$(GO) test .
 
+.PHONY: e2e
 e2e:
 	@echo '# E2E tests of $(DESTDIR)/$(CLI)' >&2
 	@printf 'Hacker News\nLemmy\nLobsters\nReddit\n' >test_case.grugbrain
@@ -59,14 +75,17 @@ e2e:
 	$(DESTDIR)/$(CLI) --timeout 10s 'https://grugbrain.dev' | cut -d'	' -f1 | sort -u | diff test_case.grugbrain -
 	$(DESTDIR)/$(CLI) --timeout 8500ms 'zażółćjaźńgęślą' | diff test_case.unknown -
 
-build: *.go
+.PHONY: build
+build:
 	@echo '# Build CLI executable: $(DESTDIR)/$(CLI)' >&2
 	$(GO) build -C $(CLIDIR) $(GOFLAGS) $(LDFLAGS) -o '../../$(DESTDIR)/$(CLI)'
 
-unsafe: *.go
+.PHONY: unsafe
+unsafe:
 	@$(MAKE) GOFLAGS='-tags=unsafe' build
 
-dist: *.go
+.PHONY: dist
+dist:
 	@echo '# Create CLI executables in $(DESTDIR)' >&2
 	# hardened
 	GOOS=openbsd GOARCH=amd64 $(GO) build -C $(CLIDIR) $(GOFLAGS) $(LDFLAGS) -o '../../$(DESTDIR)/opinions-openbsd_amd64-hardened'
@@ -80,10 +99,12 @@ dist: *.go
 	@echo '# Create checksums' >&2
 	@cd $(DESTDIR); sha256sum * >sha256sum.txt
 
+.PHONY: install-dependencies
 install-dependencies:
 	@echo '# Install CLI dependencies' >&2
 	@GOFLAGS='-v -x' $(GO) get -C $(CLIDIR) $(GOFLAGS) .
 
+.PHONY: cli-release
 cli-release: check test
 	@echo '# Update local branch' >&2
 	@git pull --rebase
