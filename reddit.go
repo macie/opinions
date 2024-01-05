@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/url"
 
+	"github.com/macie/opinions/html"
 	"github.com/macie/opinions/http"
 )
 
@@ -53,6 +54,17 @@ func SearchReddit(ctx context.Context, client http.Client, query string) ([]Disc
 	if r.StatusCode != http.StatusOK {
 		if r.Header.Get("X-Ratelimit-Remaining") == "0" { // https://support.reddithelp.com/hc/en-us/articles/16160319875092-Reddit-Data-API-Wiki
 			return discussions, fmt.Errorf("cannot search Reddit: too many requests. Wait %s seconds", r.Header.Get("X-Ratelimit-Reset"))
+		}
+
+		if r.StatusCode == 403 {
+			var details string
+			body, err := html.Parse(r.Body)
+			if err != nil {
+				details = ""
+			}
+			details = html.Text(html.First(body, "p"))
+
+			return discussions, fmt.Errorf("cannot search Reddit: your IP address seems to be banned by Reddit: `GET %s` responded with `%s`", r.Request.URL, details)
 		}
 
 		return discussions, fmt.Errorf("cannot search Reddit: `GET %s` responded with status code %d", r.Request.URL, r.StatusCode)
