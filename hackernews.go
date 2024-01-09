@@ -7,7 +7,7 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/macie/opinions/http"
+	"github.com/macie/opinions/internal/http"
 )
 
 // HackerNewsResponse represents some interesting fields of response from

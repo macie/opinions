@@ -8,8 +8,8 @@ import (
 	"sync"
 
 	"github.com/macie/opinions"
-	"github.com/macie/opinions/http"
-	"github.com/macie/opinions/security"
+	"github.com/macie/opinions/internal/http"
+	"github.com/macie/opinions/internal/security"
 )
 
 var AppVersion string // injected during build

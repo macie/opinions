@@ -7,7 +7,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/macie/opinions/http"
+	"github.com/macie/opinions/internal/http"
 )
 
 // LemmyResponse represents some interesting fields of response from

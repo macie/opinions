@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"net/url"
 
-	"github.com/macie/opinions/html"
-	"github.com/macie/opinions/http"
+	"github.com/macie/opinions/internal/html"
+	"github.com/macie/opinions/internal/http"
 )
 
 // RedditResponse represents some interesting fields of response from Reddit API.

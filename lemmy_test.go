@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/macie/opinions/ensure"
-	"github.com/macie/opinions/http"
+	"github.com/macie/opinions/internal/ensure"
+	"github.com/macie/opinions/internal/http"
 )
 
 func ExampleSearchLemmy() {

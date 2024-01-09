@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/macie/opinions/security"
+	"github.com/macie/opinions/internal/security"
 )
 
 // AppConfig represets current app configuration.

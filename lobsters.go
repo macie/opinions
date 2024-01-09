@@ -6,8 +6,8 @@ import (
 	"net/url"
 	"strconv"
 
-	"github.com/macie/opinions/html"
-	"github.com/macie/opinions/http"
+	"github.com/macie/opinions/internal/html"
+	"github.com/macie/opinions/internal/http"
 )
 
 // SearchLobsters query Lobsters search engine for given prompt. It returns list

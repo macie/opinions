@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/macie/opinions/ensure"
+	"github.com/macie/opinions/internal/ensure"
 )
 
 func ExampleGet() {
