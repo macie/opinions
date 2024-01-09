@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -53,7 +54,11 @@ func main() {
 
 			discussions, err := searchFn(ctx, client, config.Query)
 			if err != nil {
-				log.Println(err)
+				if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
+					// context errors are handled near the end of the program
+					return
+				}
+				log.Printf("cannot search: %s\n", err)
 				return
 			}
 
@@ -63,6 +68,20 @@ func main() {
 		}(s)
 	}
 	wg.Wait()
+
+	switch ctx.Err() {
+	case nil:
+		// no error
+	case context.Canceled:
+		log.Println("searching was cancelled by user")
+		os.Exit(1)
+	case context.DeadlineExceeded:
+		log.Println("searching needs more time than expected")
+		os.Exit(1)
+	default:
+		log.Printf("searching was interrupted: %s\n", ctx.Err())
+		os.Exit(1)
+	}
 
 	os.Exit(0)
 }
