@@ -26,7 +26,6 @@ jobs:
             esm.ubuntu.com:443
             security.ubuntu.com:80
             proxy.golang.org:443
-            hn.algolia.com:80
             hn.algolia.com:443
             lemmy.world:443
             lobste.rs:443
@@ -75,7 +74,6 @@ jobs:
             motd.ubuntu.com:443
             esm.ubuntu.com:443
             downloads.raspberrypi.org:443
-            hn.algolia.com:80
             hn.algolia.com:443
             lemmy.world:443
             lobste.rs:443
@@ -125,7 +123,6 @@ jobs:
             motd.ubuntu.com:443
             esm.ubuntu.com:443
             downloads.raspberrypi.org:443
-            hn.algolia.com:80
             hn.algolia.com:443
             lemmy.world:443
             lobste.rs:443
@@ -203,7 +200,6 @@ jobs:
             esm.ubuntu.com:443
             pypi.org:443
             files.pythonhosted.org:443
-            hn.algolia.com:80
             hn.algolia.com:443
             lemmy.world:443
             lobste.rs:443
@@ -258,7 +254,6 @@ jobs:
             esm.ubuntu.com:443
             pypi.org:443
             files.pythonhosted.org:443
-            hn.algolia.com:80
             hn.algolia.com:443
             lemmy.world:443
             lobste.rs:443

@@ -28,10 +28,11 @@ LDFLAGS = -ldflags "-s -w -X main.AppVersion=$(VERSION)"
 # INTERNAL MACROS
 #
 
-CURRENT_VER_TAG = $$(git tag --points-at HEAD | sed 's/^v//' | sort -t. -k 1,1n -k 2,2n -k 3,3n | tail -1)
-LATEST_VERSION  = $$(git tag | sed 's/^v//' | sort -t. -k 1,1n -k 2,2n -k 3,3n | tail -1)
-PSEUDOVERSION   = $$(VER="$(LATEST_VERSION)"; echo "$${VER:-0.0.0}")-$$(TZ=UTC git --no-pager show --quiet --abbrev=12 --date='format-local:%Y%m%d%H%M%S' --format='%cd-%h')
-VERSION         = $$(VER="$(CURRENT_VER_TAG)"; echo "$${VER:-$(PSEUDOVERSION)}")
+CLI_CURRENT_VER_TAG   = $$(git tag --points-at HEAD | grep "^cli" | sed 's/^cli\/v//' | sort -t. -k 1,1n -k 2,2n -k 3,3n | tail -1)
+CLI_LATEST_VERSION    = $$(git tag | grep "^cli" | sed 's/^cli\/v//' | sort -t. -k 1,1n -k 2,2n -k 3,3n | tail -1)
+CLI_PSEUDOVERSION     = $$(VER="$(CLI_LATEST_VERSION)"; echo "$${VER:-0001.01}")-$$(TZ=UTC git --no-pager show --quiet --abbrev=12 --date='format-local:%Y%m%d%H%M%S' --format='%cd-%h')
+CLI_VERSION           = $$(VER="$(CLI_CURRENT_VER_TAG)"; echo "$${VER:-$(CLI_PSEUDOVERSION)}")
+MODULE_LATEST_VERSION = $$(git tag | grep "^v" | sed 's/^v//' | sort -t. -k 1,1n -k 2,2n -k 3,3n | tail -1)
 
 
 #
@@ -101,10 +102,19 @@ install-dependencies:
 cli-release: check test
 	@echo '# Update local branch' >&2
 	@git pull --rebase
-	@echo '# Create new release tag' >&2
-	@VER="$(LATEST_VERSION)"; printf 'Choose new version number (>%s): ' "$${VER:-0.0.0}"
+	@echo '# Create new CLI release tag' >&2
+	@VER="$(CLI_LATEST_VERSION)"; printf 'Choose new version number for CLI (calver; >%s): ' "$${VER:-2024.01}"
 	@read -r NEW_VERSION; \
-		echo "New tag: $${NEW_VERSION}"
+		git tag "cli/v$$NEW_VERSION"; \
+		git push --tags
+
+.PHONY: module-release
+module-release: check test
+	@echo '# Update local branch' >&2
+	@git pull --rebase
+	@echo '# Create new Go module release tag' >&2
+	@VER="$(MODULE_LATEST_VERSION)"; printf 'Choose new version number for module (semver; >%s): ' "$${VER:-2.0.0}"
+	@read -r NEW_VERSION; \
 		git tag "v$$NEW_VERSION"; \
 		git push --tags
 

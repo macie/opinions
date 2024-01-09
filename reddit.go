@@ -56,7 +56,7 @@ func SearchReddit(ctx context.Context, client GetRequester, query string) ([]Dis
 			return discussions, fmt.Errorf("cannot search Reddit: too many requests. Wait %s seconds", r.Header.Get("X-Ratelimit-Reset"))
 		}
 
-		if r.StatusCode == 403 {
+		if r.StatusCode == http.StatusForbidden {
 			var details string
 			body, err := html.Parse(r.Body)
 			if err != nil {
