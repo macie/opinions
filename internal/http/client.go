@@ -22,7 +22,7 @@ type Client struct {
 
 // Get issues a GET to the specified URL with given context and custom
 // User-Agent. It is a replacement for net/http module Get function.
-func (c *Client) Get(ctx context.Context, url string) (resp *http.Response, err error) {
+func (c Client) Get(ctx context.Context, url string) (resp *http.Response, err error) {
 	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
 	if err != nil {
 		return nil, err
@@ -34,7 +34,7 @@ func (c *Client) Get(ctx context.Context, url string) (resp *http.Response, err 
 
 // UserAgent constructs User-Agent string in format:
 // `opinions/<version_number> (<os>; +https://github.com/macie/opinions)`.
-func (c *Client) UserAgent() string {
+func (c Client) UserAgent() string {
 	version := c.AppVersion
 	if version == "" {
 		version = "local-dev"

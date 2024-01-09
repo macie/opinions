@@ -3,16 +3,16 @@ package opinions
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"net/url"
 	"strconv"
 
 	"github.com/macie/opinions/internal/html"
-	"github.com/macie/opinions/internal/http"
 )
 
 // SearchLobsters query Lobsters search engine for given prompt. It returns list
 // of discussions sorted by relevance.
-func SearchLobsters(ctx context.Context, client http.Client, query string) ([]Discussion, error) {
+func SearchLobsters(ctx context.Context, client GetRequester, query string) ([]Discussion, error) {
 	discussions := make([]Discussion, 0)
 	searchURL := "https://lobste.rs/search?what=stories&order=relevance&q="
 

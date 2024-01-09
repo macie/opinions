@@ -4,10 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"net/url"
 	"strings"
-
-	"github.com/macie/opinions/internal/http"
 )
 
 // LemmyResponse represents some interesting fields of response from
@@ -32,7 +31,7 @@ type LemmyResponse struct {
 // comment, with decay over time.
 //
 // See: https://join-lemmy.org/docs/users/03-votes-and-ranking.html
-func SearchLemmy(ctx context.Context, client http.Client, query string) ([]Discussion, error) {
+func SearchLemmy(ctx context.Context, client GetRequester, query string) ([]Discussion, error) {
 	discussions := make([]Discussion, 0)
 	searchURL := "https://lemmy.world/api/v3/search?listingType=All&sort=Active"
 

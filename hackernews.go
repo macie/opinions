@@ -4,10 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"net/url"
 	"time"
-
-	"github.com/macie/opinions/internal/http"
 )
 
 // HackerNewsResponse represents some interesting fields of response from
@@ -28,7 +27,7 @@ type HackerNewsResponse struct {
 // discussions sorted by relevance, then popularity, then number of comments.
 //
 // See: https://hn.algolia.com/api
-func SearchHackerNews(ctx context.Context, client http.Client, query string) ([]Discussion, error) {
+func SearchHackerNews(ctx context.Context, client GetRequester, query string) ([]Discussion, error) {
 	searchURL := "http://hn.algolia.com/api/v1/search?"
 	discussions := make([]Discussion, 0)
 

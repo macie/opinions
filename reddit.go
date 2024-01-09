@@ -4,10 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"net/url"
 
 	"github.com/macie/opinions/internal/html"
-	"github.com/macie/opinions/internal/http"
 )
 
 // RedditResponse represents some interesting fields of response from Reddit API.
@@ -41,7 +41,7 @@ func (r *RedditResponse) UnmarshalJSON(b []byte) error {
 // sorted by relevance.
 //
 // See: https://www.reddit.com/dev/api#GET_search
-func SearchReddit(ctx context.Context, client http.Client, query string) ([]Discussion, error) {
+func SearchReddit(ctx context.Context, client GetRequester, query string) ([]Discussion, error) {
 	discussions := make([]Discussion, 0)
 	searchURL := "https://www.reddit.com/search.json?sort=relevance&t=all&q="
 

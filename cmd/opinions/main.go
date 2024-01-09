@@ -65,7 +65,7 @@ func main() {
 }
 
 // RemoteSearch represents function for searching on social news website.
-type RemoteSearch func(context.Context, http.Client, string) ([]opinions.Discussion, error)
+type RemoteSearch func(context.Context, opinions.GetRequester, string) ([]opinions.Discussion, error)
 
 // PrintCommented prints to standard output searching results with non-zero
 // comments for given collection.
