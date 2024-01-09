@@ -1,5 +1,6 @@
 # opinions
 
+[![Go Reference](https://pkg.go.dev/badge/github.com/macie/opinions.svg)](https://pkg.go.dev/github.com/macie/opinions)
 [![Quality check status](https://github.com/macie/opinions/actions/workflows/check.yml/badge.svg)](https://github.com/macie/opinions/actions/workflows/check.yml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/macie/opinions)](https://goreportcard.com/report/github.com/macie/opinions)
 
@@ -18,7 +19,7 @@ It directly calls search engines on underlying websites.
 Application is developed with a security-first approach:
 
 - functionality is limited by design
-- access to the OS is restricted by application-level sandboxing (with [pledge](https://man.openbsd.org/pledge.2) and [seccomp](https://en.wikipedia.org/wiki/Seccomp)).
+- access to the OS is restricted by [application-level sandboxing](#security-hardening).
 
 ## Usage
 
@@ -69,25 +70,40 @@ Use `make` (GNU or BSD):
 - `make test` - runs test
 - `make e2e` - runs e2e tests for CLI
 - `make check` - static code analysis
-- `make build` - compile binary from latest commit
-- `make unsafe` - compile binary from latest commit without security sandbox
-- `make dist` - compile binaries from latest commit for supported OSes (with [proper version number](https://go.dev/doc/modules/version-numbers))
+- `make build` - compile binary from the latest commit
+- `make unsafe` - compile binary from the latest commit without the security sandbox
+- `make dist` - compile binaries from the latest commit for all supported OSes
 - `make clean` - removes compilation artifacts
-- `make cli-release` - tag latest commit as a new release of CLI
+- `make cli-release` - tag the latest commit as a new release of CLI
+- `make module-release` - tag the latest commit as a new release of Go module
 - `make info` - print system info (useful for debugging).
 
-## Bugs
+### Versioning
 
-Results depend on search engines of underlying social news websites. They
-may be different than expected.
+At the begining, only CLI was released with _[semantic versioning](https://semver.org/)_ scheme (commits marked by tags `v1.0.0`-`v1.5.1`).
 
-## TODO
+Currently repo contains CLI and Go module which can be developed with different
+pace. Commits with versions are tagged with:
+- `v2.X.X` (_[semantic versioning](https://semver.org/)_) - versions of Go module
+- `cli/vYYYY.0M.MICRO` (_[calendar versioning](https://calver.org/)_) - versions of command-line utility.
+
+### Security hardening
+
+On modern Linuxes and OpenBSD, CLI application has restricted access to kernel
+calls with [seccomp](https://en.wikipedia.org/wiki/Seccomp) and [pledge](https://man.openbsd.org/pledge.2).
+
+### TODO
 
 - add [sandboxing](https://learnbchs.org/pledge.html) for FreeBSD (with
 [Capsicum](https://en.wikipedia.org/wiki/Capsicum_(Unix)) - see:
 <https://reviews.freebsd.org/rS308432> and
 <https://cgit.freebsd.org/src/tree/lib/libcapsicum/capsicum_helpers.h?id=d66f9c86fa3fd8d8f0a56ea96b03ca11f2fac1fb#n104>))
 - verify hardened version of linux arm and arm64.
+
+## Bugs
+
+Results depend on search engines of underlying social news websites. They
+may be different than expected.
 
 ## License
 
