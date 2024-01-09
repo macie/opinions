@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"sync"
@@ -56,7 +57,9 @@ func main() {
 				return
 			}
 
-			PrintCommented(discussions)
+			if _, err := FprintlnCommented(os.Stdout, discussions...); err != nil {
+				log.Printf("cannot print results to stdout: %s\n", err)
+			}
 		}(s)
 	}
 	wg.Wait()
@@ -67,13 +70,17 @@ func main() {
 // RemoteSearch represents function for searching on social news website.
 type RemoteSearch func(context.Context, opinions.GetRequester, string) ([]opinions.Discussion, error)
 
-// PrintCommented prints to standard output searching results with non-zero
-// comments for given collection.
-func PrintCommented(discussions []opinions.Discussion) {
+// FprintlnCommented writes to w discussions with non-zero comments, each in
+// a new line.
+func FprintlnCommented(w io.Writer, discussions ...opinions.Discussion) (int, error) {
+	buf := make([]byte, 0, 1024)
 	for _, d := range discussions {
 		if d.Comments == 0 {
 			continue
 		}
-		fmt.Fprintf(os.Stdout, "%s\n", d)
+		buf = append(buf, d.String()...)
+		buf = append(buf, '\n')
 	}
+
+	return w.Write(buf)
 }
