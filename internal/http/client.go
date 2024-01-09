@@ -8,11 +8,6 @@ import (
 	"runtime"
 )
 
-// Selected HTTP status codes as registered with IANA. See: https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
-const (
-	StatusOK = 200
-)
-
 // A Client is an HTTP client.
 type Client struct {
 	defaultClient http.Client
