@@ -1,6 +1,7 @@
 # opinions
 
 [![Quality check status](https://github.com/macie/opinions/actions/workflows/check.yml/badge.svg)](https://github.com/macie/opinions/actions/workflows/check.yml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/macie/opinions)](https://goreportcard.com/report/github.com/macie/opinions)
 
 Find opinions about a given phrase (also URL) on social news websites:
 
