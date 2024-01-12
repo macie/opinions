@@ -2,7 +2,11 @@
 
 package security
 
-import "golang.org/x/sys/unix"
+import (
+	"fmt"
+
+	"golang.org/x/sys/unix"
+)
 
 // IsHardened reports whether security sandbox is enabled.
 const IsHardened = true
@@ -12,5 +16,9 @@ const IsHardened = true
 //
 // See: https://man.openbsd.org/pledge.2
 func Sandbox() error {
-	return unix.PledgePromises("stdio inet rpath")
+	if err := unix.PledgePromises("stdio inet rpath"); err != nil {
+		return fmt.Errorf("%w: %w", ErrNoSandbox, err)
+	}
+
+	return nil
 }

@@ -14,5 +14,5 @@ const IsHardened = false
 
 // Sandbox restrict access to system resources.
 func Sandbox() error {
-	return fmt.Errorf("security sandbox is unavailable on %s/%s. To use app on this platform, compile it without sandbox (with 'unsafe' flag)", runtime.GOOS, runtime.GOARCH)
+	return fmt.Errorf("%w: sandbox is unavailable on %s/%s. To use app on this platform, compile it without sandbox (with 'unsafe' flag)", ErrNoSandbox, runtime.GOOS, runtime.GOARCH)
 }

@@ -3,6 +3,8 @@
 package security
 
 import (
+	"fmt"
+
 	seccomp "github.com/seccomp/libseccomp-golang"
 )
 
@@ -41,13 +43,13 @@ func Sandbox() error {
 	// see: https://github.com/golang/go/issues/3405#issuecomment-750816828
 	whitelist, err := seccomp.NewFilter(seccomp.ActKillProcess)
 	if err != nil {
-		return err
+		return fmt.Errorf("%w: %w", ErrNoSandbox, err)
 	}
 
 	for _, callName := range allowedSyscalls {
 		callId, err := seccomp.GetSyscallFromName(callName)
 		if err != nil {
-			return err
+			return fmt.Errorf("%w: %w", ErrNoSandbox, err)
 		}
 
 		whitelist.AddRule(callId, seccomp.ActAllow)
