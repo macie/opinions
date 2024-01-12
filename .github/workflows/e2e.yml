@@ -81,18 +81,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
-      - name: Setup seccomp
-        uses: awalsh128/cache-apt-pkgs-action@44c33b32f808cdddd5ac0366d70595ed63661ed8 # v1.3.1
-        with:
-          packages: libseccomp-dev
-
       - name: Setup Go
         uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
         with:
           go-version: 'stable'
-
-      - name: Setup Zig
-        uses: goto-bus-stop/setup-zig@v2
 
       - name: Install dependencies
         run: make
@@ -107,7 +99,7 @@ jobs:
           cpu_info: cpuinfo/raspberrypi_3b
           base_image: raspios_lite:latest
           commands: |
-            make CLI=opinions-linux_armv7-hardened e2e
+            uname -a && make CLI=opinions-linux_armv7-hardened e2e
 
   linux-arm64:
     name: Linux ARM64
@@ -139,18 +131,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
-      - name: Install build tools
-        uses: awalsh128/cache-apt-pkgs-action@44c33b32f808cdddd5ac0366d70595ed63661ed8 # v1.3.1
-        with:
-          packages: gperf
-
       - name: Setup Go
         uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
         with:
           go-version: 'stable'
-
-      - name: Setup Zig
-        uses: goto-bus-stop/setup-zig@v2
 
       - name: Install dependencies
         run: make
@@ -165,7 +149,7 @@ jobs:
           cpu_info: cpuinfo/raspberrypi_zero2_w_arm64
           base_image: raspios_lite_arm64:latest
           commands: |
-            make CLI=opinions-linux_arm64-hardened e2e
+            uname -a && make CLI=opinions-linux_arm64-hardened e2e
 
   # windows:
   #   name: Windows amd64 (not hardened)
