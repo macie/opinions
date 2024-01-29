@@ -220,7 +220,7 @@ jobs:
         run: make opinions-freebsd_amd64
 
       - name: Run E2E tests inside VM
-        uses: vmactions/freebsd-vm@d139f0eaa5d47d9fcc44f7ab1748574475d89565 # v1.0.5
+        uses: vmactions/freebsd-vm@35a5b20a98476a681c7576a344775be7e7f77f06 # v1.0.6
         with:
           usesh: true
           run: |
