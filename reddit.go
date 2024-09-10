@@ -62,9 +62,12 @@ func SearchReddit(ctx context.Context, client GetRequester, query string) ([]Dis
 			if err != nil {
 				details = ""
 			}
-			details = html.Text(html.First(body, "p"))
+			details = html.Text(html.First(body, "div > div > div > div > div"))
+			if details == "" {
+				details = "status 403"
+			}
 
-			return discussions, fmt.Errorf("cannot search Reddit: your IP address seems to be banned by Reddit: `GET %s` responded with `%s`", r.Request.URL, details)
+			return discussions, fmt.Errorf("cannot search Reddit: your IP address seems to be banned by Reddit: `GET %s` responded '%s'", r.Request.URL, details)
 		}
 
 		return discussions, fmt.Errorf("cannot search Reddit: `GET %s` responded with status code %d", r.Request.URL, r.StatusCode)
