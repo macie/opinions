@@ -42,18 +42,18 @@ func (r *RedditResponse) UnmarshalJSON(b []byte) error {
 //
 // See: https://www.reddit.com/dev/api#GET_search
 func SearchReddit(ctx context.Context, client GetRequester, query string) ([]Discussion, error) {
-	discussions := make([]Discussion, 0)
 	searchURL := "https://www.reddit.com/search.json?sort=relevance&t=all&q="
+	noDiscussions := make([]Discussion, 0)
 
 	r, err := client.Get(ctx, searchURL+url.QueryEscape(query))
 	if err != nil {
-		return discussions, err
+		return noDiscussions, err
 	}
 	defer r.Body.Close()
 
 	if r.StatusCode != http.StatusOK {
 		if r.Header.Get("X-Ratelimit-Remaining") == "0" { // https://support.reddithelp.com/hc/en-us/articles/16160319875092-Reddit-Data-API-Wiki
-			return discussions, fmt.Errorf("cannot search Reddit: too many requests. Wait %s seconds", r.Header.Get("X-Ratelimit-Reset"))
+			return noDiscussions, fmt.Errorf("cannot search Reddit: too many requests. Wait %s seconds", r.Header.Get("X-Ratelimit-Reset"))
 		}
 
 		if r.StatusCode == http.StatusForbidden {
@@ -67,17 +67,18 @@ func SearchReddit(ctx context.Context, client GetRequester, query string) ([]Dis
 				details = "status 403"
 			}
 
-			return discussions, fmt.Errorf("cannot search Reddit: your IP address seems to be banned by Reddit: `GET %s` responded '%s'", r.Request.URL, details)
+			return noDiscussions, fmt.Errorf("cannot search Reddit: your IP address seems to be banned by Reddit: `GET %s` responded '%s'", r.Request.URL, details)
 		}
 
-		return discussions, fmt.Errorf("cannot search Reddit: `GET %s` responded with status code %d", r.Request.URL, r.StatusCode)
+		return noDiscussions, fmt.Errorf("cannot search Reddit: `GET %s` responded with status code %d", r.Request.URL, r.StatusCode)
 	}
 
 	var response RedditResponse
 	if err := json.NewDecoder(r.Body).Decode(&response); err != nil {
-		return discussions, err
+		return noDiscussions, err
 	}
 
+	discussions := make([]Discussion, 0, len(response.Data.Children))
 	for _, entry := range response.Data.Children {
 		discussions = append(discussions, Discussion{
 			Service:  "Reddit",

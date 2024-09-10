@@ -29,7 +29,7 @@ type HackerNewsResponse struct {
 // See: https://hn.algolia.com/api
 func SearchHackerNews(ctx context.Context, client GetRequester, query string) ([]Discussion, error) {
 	searchURL := "https://hn.algolia.com/api/v1/search?"
-	discussions := make([]Discussion, 0)
+	noDiscussions := make([]Discussion, 0)
 
 	_, err := url.Parse(query)
 	switch {
@@ -41,19 +41,20 @@ func SearchHackerNews(ctx context.Context, client GetRequester, query string) ([
 
 	r, err := client.Get(ctx, searchURL+url.QueryEscape(query))
 	if err != nil {
-		return discussions, err
+		return noDiscussions, err
 	}
 	defer r.Body.Close()
 
 	if r.StatusCode != http.StatusOK {
-		return discussions, fmt.Errorf("cannot search Hacker News: `GET %s` responded with status code %d", r.Request.URL, r.StatusCode)
+		return noDiscussions, fmt.Errorf("cannot search Hacker News: `GET %s` responded with status code %d", r.Request.URL, r.StatusCode)
 	}
 
 	var response HackerNewsResponse
 	if err := json.NewDecoder(r.Body).Decode(&response); err != nil {
-		return discussions, err
+		return noDiscussions, err
 	}
 
+	discussions := make([]Discussion, 0, len(response.Hits))
 	for _, entry := range response.Hits {
 		discussions = append(discussions, Discussion{
 			Service:  "Hacker News",
