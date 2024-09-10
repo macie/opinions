@@ -32,8 +32,8 @@ type LemmyResponse struct {
 //
 // See: https://join-lemmy.org/docs/users/03-votes-and-ranking.html
 func SearchLemmy(ctx context.Context, client GetRequester, query string) ([]Discussion, error) {
-	discussions := make([]Discussion, 0)
 	searchURL := "https://lemmy.world/api/v3/search?listingType=All&sort=Active"
+	noDiscussions := make([]Discussion, 0)
 
 	_, err := url.Parse(query)
 	switch {
@@ -49,19 +49,20 @@ func SearchLemmy(ctx context.Context, client GetRequester, query string) ([]Disc
 
 	r, err := client.Get(ctx, searchURL+url.QueryEscape(query))
 	if err != nil {
-		return discussions, err
+		return noDiscussions, err
 	}
 	defer r.Body.Close()
 
 	if r.StatusCode != http.StatusOK {
-		return discussions, fmt.Errorf("cannot search Lemmy: `GET %s` responded with status code %d", r.Request.URL, r.StatusCode)
+		return noDiscussions, fmt.Errorf("cannot search Lemmy: `GET %s` responded with status code %d", r.Request.URL, r.StatusCode)
 	}
 
 	var response LemmyResponse
 	if err := json.NewDecoder(r.Body).Decode(&response); err != nil {
-		return discussions, err
+		return noDiscussions, err
 	}
 
+	discussions := make([]Discussion, 0, len(response.Posts))
 	for _, entry := range response.Posts {
 		discussions = append(discussions, Discussion{
 			Service:  "Lemmy",
