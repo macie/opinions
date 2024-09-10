@@ -23,11 +23,11 @@ func Sandbox() error {
 	allowedSyscalls := []string{
 		// similar to stdio pledge
 		"clone3", "close", "epoll_create1", "epoll_ctl", "epoll_pwait",
-		"exit_group", "fcntl", "fstat", "futex", "getpid", "getrandom",
-		"getsockopt", "gettid", "madvise", "mmap", "mprotect", "munmap", "nanosleep",
-		"pipe2", "read", "rseq", "rt_sigprocmask", "rt_sigreturn",
-		"sched_getaffinity", "sched_yield", "set_robust_list", "setsockopt",
-		"sigaltstack", "tgkill", "uname", "write",
+		"eventfd2", "exit_group", "fcntl", "fstat", "futex", "getpid",
+		"getrandom", "getsockopt", "gettid", "madvise", "mmap", "mprotect",
+		"munmap", "nanosleep", "pipe2", "read", "rseq", "rt_sigprocmask",
+		"rt_sigreturn", "sched_getaffinity", "sched_yield", "set_robust_list",
+		"setsockopt", "sigaltstack", "tgkill", "uname", "write",
 
 		// similar to inet pledge
 		"connect", "getpeername", "getsockname", "socket",
