@@ -32,6 +32,10 @@ func FindAll(n *html.Node, query string) []*html.Node {
 
 // Attr returns given attribute value (or empty string if not found).
 func Attr(n *html.Node, name string) string {
+	if n == nil {
+		return ""
+	}
+
 	for _, a := range n.Attr {
 		if a.Key == name {
 			return a.Val
@@ -42,6 +46,10 @@ func Attr(n *html.Node, name string) string {
 
 // Text returns text content of node.
 func Text(n *html.Node) string {
+	if n == nil {
+		return ""
+	}
+
 	if n.Type == html.TextNode {
 		return n.Data
 	}
