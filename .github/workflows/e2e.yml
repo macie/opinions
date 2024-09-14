@@ -26,6 +26,7 @@ jobs:
             esm.ubuntu.com:443
             security.ubuntu.com:80
             proxy.golang.org:443
+            sum.golang.org:443
             hn.algolia.com:443
             lemmy.world:443
             lobste.rs:443
@@ -68,6 +69,7 @@ jobs:
             api.github.com:443
             objects.githubusercontent.com:443
             proxy.golang.org:443
+            sum.golang.org:443
             ppa.launchpadcontent.net:443
             packages.microsoft.com:443
             azure.archive.ubuntu.com:80
@@ -117,6 +119,7 @@ jobs:
             api.github.com:443
             objects.githubusercontent.com:443
             proxy.golang.org:443
+            sum.golang.org:443
             ppa.launchpadcontent.net:443
             packages.microsoft.com:443
             azure.archive.ubuntu.com:80
@@ -188,6 +191,7 @@ jobs:
             github.com:443
             api.github.com:443
             proxy.golang.org:443
+            sum.golang.org:443
             0.freebsd.pool.ntp.org:443
             2.freebsd.pool.ntp.org:443
             raw.githubusercontent.com:443
@@ -241,6 +245,7 @@ jobs:
             github.com:443
             api.github.com:443
             proxy.golang.org:443
+            sum.golang.org:443
             pool.ntp.org:443
             cdn.openbsd.org:443
             www.google.com:443
