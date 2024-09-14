@@ -80,7 +80,7 @@ Use `make` (GNU or BSD):
 
 ### Versioning
 
-At the begining, only CLI was released with _[semantic versioning](https://semver.org/)_ scheme (commits marked by tags `v1.0.0`-`v1.5.1`).
+At the beginning, only CLI was released with _[semantic versioning](https://semver.org/)_ scheme (commits marked by tags `v1.0.0`-`v1.5.1`).
 
 Currently repo contains CLI and Go module which can be developed with different
 pace. Commits with versions are tagged with:

@@ -44,7 +44,7 @@ all: install-dependencies
 
 .PHONY: clean
 clean:
-	@echo '# Delete bulid directory' >&2
+	@echo '# Delete build directory' >&2
 	rm -rf $(DESTDIR)
 
 .PHONY: info

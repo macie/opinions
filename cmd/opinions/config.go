@@ -12,7 +12,7 @@ import (
 	"github.com/macie/opinions/internal/security"
 )
 
-// AppConfig represets current app configuration.
+// AppConfig represents current app configuration.
 type AppConfig struct {
 	appVersion  string
 	Query       string
