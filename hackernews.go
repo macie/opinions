@@ -27,10 +27,10 @@ type HackerNewsResponse struct {
 // discussions sorted by relevance, then popularity, then number of comments.
 //
 // See: https://hn.algolia.com/api
-func SearchHackerNews(ctx context.Context, client GetRequester, query string) ([]Discussion, error) {
+func SearchHackerNews(ctx context.Context, client GetRequester, query string) (discussions []Discussion, err error) {
 	searchURL := "https://hn.algolia.com/api/v1/search?"
 
-	_, err := url.Parse(query)
+	_, err = url.Parse(query)
 	switch {
 	case err == nil:
 		searchURL += "restrictSearchableAttributes=url&query="
@@ -42,7 +42,11 @@ func SearchHackerNews(ctx context.Context, client GetRequester, query string) ([
 	if err != nil {
 		return noDiscussions, err
 	}
-	defer r.Body.Close()
+	defer func() {
+		if closeErr := r.Body.Close(); closeErr != nil && err == nil {
+			err = closeErr
+		}
+	}()
 
 	if r.StatusCode != http.StatusOK {
 		return noDiscussions, fmt.Errorf("GET %s` responded with unexpected status code %d", r.Request.URL, r.StatusCode)
@@ -53,7 +57,7 @@ func SearchHackerNews(ctx context.Context, client GetRequester, query string) ([
 		return noDiscussions, err
 	}
 
-	discussions := make([]Discussion, 0, len(response.Hits))
+	discussions = make([]Discussion, 0, len(response.Hits))
 	for _, entry := range response.Hits {
 		discussions = append(discussions, Discussion{
 			Service:  "Hacker News",
