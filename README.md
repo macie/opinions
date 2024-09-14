@@ -69,7 +69,7 @@ Use `make` (GNU or BSD):
 - `make` - install dependencies
 - `make test` - runs test
 - `make e2e` - runs e2e tests for CLI
-- `make check` - static code analysis
+- `make check` - runs quality checks
 - `make build` - compile binary from the latest commit
 - `make unsafe` - compile binary from the latest commit without the security sandbox
 - `make dist` - compile binaries from the latest commit for all supported OSes

@@ -23,6 +23,10 @@ GO      = go
 GOFLAGS = 
 LDFLAGS = -ldflags "-s -w -X main.appVersion=$(VERSION)"
 
+BETTERALIGN = $$($(GO) env GOPATH)/bin/betteralign
+ERRCHECK = $$($(GO) env GOPATH)/bin/errcheck
+STATICCHECK = $$($(GO) env GOPATH)/bin/staticcheck
+
 
 #
 # INTERNAL MACROS
@@ -53,18 +57,28 @@ info:
 	@uname -rsv;
 	@echo '# Development dependencies:'
 	@$(GO) version || true
+	@$(BETTERALIGN) -V=full || true
+	# @$(ERRCHECK) --version || true  # not supported, see: https://github.com/kisielk/errcheck/issues/254
+	@$(STATICCHECK) --version || true
 	@echo '# Go environment variables:'
 	@$(GO) env || true
 
 .PHONY: check
 check:
 	@echo '# Static analysis' >&2
-	$(GO) vet -C $(CLIDIR)
+	$(GO) vet ./...
+	$(STATICCHECK) ./...
+	$(ERRCHECK) ./...
+	$(BETTERALIGN) ./...
+	$(GO) mod verify
+	@echo '# Formatting' >&2
+	$(GO) fmt ./...
+	$(GO) mod tidy
 
 .PHONY: test
 test:
 	@echo '# Unit tests' >&2
-	$(GO) test .
+	$(GO) test ./...
 
 .PHONY: e2e
 e2e:
@@ -95,6 +109,10 @@ dist: opinions-freebsd_amd64 \
 
 .PHONY: install-dependencies
 install-dependencies:
+	@echo '# Install development dependencies:' >&2
+	$(GO) install github.com/dkorunic/betteralign/cmd/betteralign@latest
+	$(GO) install github.com/kisielk/errcheck@latest
+	$(GO) install honnef.co/go/tools/cmd/staticcheck@latest
 	@echo '# Install CLI dependencies' >&2
 	@GOFLAGS='-v -x' $(GO) get -C $(CLIDIR) $(GOFLAGS) .
 
