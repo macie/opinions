@@ -8,6 +8,9 @@ import (
 	"net/http"
 )
 
+// noDiscussions is an empty list of discussions.
+var noDiscussions []Discussion
+
 // Discussion is a representation of discussion inside social media service.
 type Discussion struct {
 	Service  string
