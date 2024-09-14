@@ -41,17 +41,17 @@ func main() {
 	defer cancel()
 
 	client := http.Client{AppVersion: appVersion}
-	services := []remoteSearch{
-		opinions.SearchHackerNews,
-		opinions.SearchLemmy,
-		opinions.SearchLobsters,
-		opinions.SearchReddit,
+	services := map[string]remoteSearch{
+		"Hacker News": opinions.SearchHackerNews,
+		"Lemmy":       opinions.SearchLemmy,
+		"Lobsters":    opinions.SearchLobsters,
+		"Reddit":      opinions.SearchReddit,
 	}
 
 	wg := new(sync.WaitGroup)
-	for _, s := range services {
+	for name, s := range services {
 		wg.Add(1)
-		go func(searchFn remoteSearch) {
+		go func(name string, searchFn remoteSearch) {
 			defer wg.Done()
 
 			discussions, err := searchFn(ctx, client, config.Query)
@@ -60,14 +60,14 @@ func main() {
 					// context errors are handled near the end of the program
 					return
 				}
-				log.Printf("cannot search: %s\n", err)
+				log.Printf("cannot search %s: %s\n", name, err)
 				return
 			}
 
 			if _, err := fprintlnCommented(os.Stdout, discussions...); err != nil {
-				log.Printf("cannot print results to stdout: %s\n", err)
+				log.Printf("cannot print %s results to stdout: %s\n", name, err)
 			}
-		}(s)
+		}(name, s)
 	}
 	wg.Wait()
 

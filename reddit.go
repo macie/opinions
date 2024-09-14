@@ -52,7 +52,7 @@ func SearchReddit(ctx context.Context, client GetRequester, query string) ([]Dis
 
 	if r.StatusCode != http.StatusOK {
 		if r.Header.Get("X-Ratelimit-Remaining") == "0" { // https://support.reddithelp.com/hc/en-us/articles/16160319875092-Reddit-Data-API-Wiki
-			return noDiscussions, fmt.Errorf("cannot search Reddit: too many requests. Wait %s seconds", r.Header.Get("X-Ratelimit-Reset"))
+			return noDiscussions, fmt.Errorf("too many requests. Wait %s seconds", r.Header.Get("X-Ratelimit-Reset"))
 		}
 
 		if r.StatusCode == http.StatusForbidden {
@@ -66,10 +66,10 @@ func SearchReddit(ctx context.Context, client GetRequester, query string) ([]Dis
 				details = "status 403"
 			}
 
-			return noDiscussions, fmt.Errorf("cannot search Reddit: your IP address seems to be banned by Reddit: `GET %s` responded '%s'", r.Request.URL, details)
+			return noDiscussions, fmt.Errorf("your IP address seems to be banned by Reddit: `GET %s` responded '%s'", r.Request.URL, details)
 		}
 
-		return noDiscussions, fmt.Errorf("cannot search Reddit: `GET %s` responded with status code %d", r.Request.URL, r.StatusCode)
+		return noDiscussions, fmt.Errorf("`GET %s` responded with status code %d", r.Request.URL, r.StatusCode)
 	}
 
 	var response RedditResponse
