@@ -33,7 +33,6 @@ type LemmyResponse struct {
 // See: https://join-lemmy.org/docs/users/03-votes-and-ranking.html
 func SearchLemmy(ctx context.Context, client GetRequester, query string) ([]Discussion, error) {
 	searchURL := "https://lemmy.world/api/v3/search?listingType=All&sort=Active"
-	noDiscussions := make([]Discussion, 0)
 
 	_, err := url.Parse(query)
 	switch {

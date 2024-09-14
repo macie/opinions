@@ -29,7 +29,6 @@ type HackerNewsResponse struct {
 // See: https://hn.algolia.com/api
 func SearchHackerNews(ctx context.Context, client GetRequester, query string) ([]Discussion, error) {
 	searchURL := "https://hn.algolia.com/api/v1/search?"
-	noDiscussions := make([]Discussion, 0)
 
 	_, err := url.Parse(query)
 	switch {

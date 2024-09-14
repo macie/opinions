@@ -43,7 +43,6 @@ func (r *RedditResponse) UnmarshalJSON(b []byte) error {
 // See: https://www.reddit.com/dev/api#GET_search
 func SearchReddit(ctx context.Context, client GetRequester, query string) ([]Discussion, error) {
 	searchURL := "https://www.reddit.com/search.json?sort=relevance&t=all&q="
-	noDiscussions := make([]Discussion, 0)
 
 	r, err := client.Get(ctx, searchURL+url.QueryEscape(query))
 	if err != nil {

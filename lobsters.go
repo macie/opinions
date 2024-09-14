@@ -14,7 +14,6 @@ import (
 // of discussions sorted by relevance.
 func SearchLobsters(ctx context.Context, client GetRequester, query string) ([]Discussion, error) {
 	searchURL := "https://lobste.rs/search?what=stories&order=relevance&q="
-	noDiscussions := make([]Discussion, 0)
 
 	// queries with URL must be prefixed for more accurate results
 	_, err := url.Parse(query)
