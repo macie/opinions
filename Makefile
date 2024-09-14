@@ -21,7 +21,7 @@ CLIDIR  = ./cmd/opinions
 DESTDIR = ./dist
 GO      = go
 GOFLAGS = 
-LDFLAGS = -ldflags "-s -w -X main.AppVersion=$(VERSION)"
+LDFLAGS = -ldflags "-s -w -X main.appVersion=$(VERSION)"
 
 
 #
