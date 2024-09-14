@@ -12,11 +12,11 @@ import (
 
 // SearchLobsters query Lobsters search engine for given prompt. It returns list
 // of discussions sorted by relevance.
-func SearchLobsters(ctx context.Context, client GetRequester, query string) ([]Discussion, error) {
+func SearchLobsters(ctx context.Context, client GetRequester, query string) (discussions []Discussion, err error) {
 	searchURL := "https://lobste.rs/search?what=stories&order=relevance&q="
 
 	// queries with URL must be prefixed for more accurate results
-	_, err := url.Parse(query)
+	_, err = url.Parse(query)
 	if err != nil {
 		query = "domain:" + query
 	}
@@ -25,7 +25,11 @@ func SearchLobsters(ctx context.Context, client GetRequester, query string) ([]D
 	if err != nil {
 		return noDiscussions, err
 	}
-	defer r.Body.Close()
+	defer func() {
+		if closeErr := r.Body.Close(); closeErr != nil && err == nil {
+			err = closeErr
+		}
+	}()
 
 	if r.StatusCode != http.StatusOK {
 		return noDiscussions, fmt.Errorf("`GET %s` responded with unexpected status code %d", r.Request.URL, r.StatusCode)
@@ -37,7 +41,7 @@ func SearchLobsters(ctx context.Context, client GetRequester, query string) ([]D
 	}
 	items := html.FindAll(body, "ol > li")
 
-	discussions := make([]Discussion, 0, len(items))
+	discussions = make([]Discussion, 0, len(items))
 	for _, listItem := range items {
 		srcNode := html.First(listItem, ".link > a")
 		commentNode := html.First(listItem, ".mobile_comments")

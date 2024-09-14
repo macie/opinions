@@ -41,14 +41,18 @@ func (r *RedditResponse) UnmarshalJSON(b []byte) error {
 // sorted by relevance.
 //
 // See: https://www.reddit.com/dev/api#GET_search
-func SearchReddit(ctx context.Context, client GetRequester, query string) ([]Discussion, error) {
+func SearchReddit(ctx context.Context, client GetRequester, query string) (discussions []Discussion, err error) {
 	searchURL := "https://www.reddit.com/search.json?sort=relevance&t=all&q="
 
 	r, err := client.Get(ctx, searchURL+url.QueryEscape(query))
 	if err != nil {
 		return noDiscussions, err
 	}
-	defer r.Body.Close()
+	defer func() {
+		if closeErr := r.Body.Close(); closeErr != nil && err == nil {
+			err = closeErr
+		}
+	}()
 
 	if r.StatusCode != http.StatusOK {
 		if r.Header.Get("X-Ratelimit-Remaining") == "0" { // https://support.reddithelp.com/hc/en-us/articles/16160319875092-Reddit-Data-API-Wiki
@@ -77,7 +81,7 @@ func SearchReddit(ctx context.Context, client GetRequester, query string) ([]Dis
 		return noDiscussions, err
 	}
 
-	discussions := make([]Discussion, 0, len(response.Data.Children))
+	discussions = make([]Discussion, 0, len(response.Data.Children))
 	for _, entry := range response.Data.Children {
 		discussions = append(discussions, Discussion{
 			Service:  "Reddit",
