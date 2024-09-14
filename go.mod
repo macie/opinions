@@ -1,6 +1,6 @@
 module github.com/macie/opinions
 
-go 1.21
+go 1.21.0
 
 require (
 	github.com/andybalholm/cascadia v1.3.2
