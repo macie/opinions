@@ -12,7 +12,7 @@ import (
 func ExampleSearchReddit() {
 	if os.Getenv("GITHUB_ACTIONS") == "true" {
 		// GitHub CI is banned by Reddit API
-		fmt.Println("Reddit	https://reddit.com/r/hypeurls/comments/17k6i1l/the_grug_brained_developer_2022/	The Grug Brained Developer (2022)	https://grugbrain.dev/")
+		fmt.Println("Reddit	https://reddit.com/r/softwaretesting/comments/1ef744p/the_grug_brained_developer_on_testing/	The Grug Brained Developer On Testing	https://grugbrain.dev/#grug-on-testing")
 		return
 	}
 
@@ -23,7 +23,7 @@ func ExampleSearchReddit() {
 
 	fmt.Println(opinions[0])
 	// Output:
-	// Reddit	https://reddit.com/r/hypeurls/comments/17k6i1l/the_grug_brained_developer_2022/	The Grug Brained Developer (2022)	https://grugbrain.dev/
+	// Reddit	https://reddit.com/r/softwaretesting/comments/1ef744p/the_grug_brained_developer_on_testing/	The Grug Brained Developer On Testing	https://grugbrain.dev/#grug-on-testing
 }
 
 func ExampleSearchReddit_unknown() {
