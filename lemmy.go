@@ -53,7 +53,7 @@ func SearchLemmy(ctx context.Context, client GetRequester, query string) ([]Disc
 	defer r.Body.Close()
 
 	if r.StatusCode != http.StatusOK {
-		return noDiscussions, fmt.Errorf("cannot search Lemmy: `GET %s` responded with status code %d", r.Request.URL, r.StatusCode)
+		return noDiscussions, fmt.Errorf("`GET %s` responded with unexpected status code %d", r.Request.URL, r.StatusCode)
 	}
 
 	var response LemmyResponse

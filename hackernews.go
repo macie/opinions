@@ -45,7 +45,7 @@ func SearchHackerNews(ctx context.Context, client GetRequester, query string) ([
 	defer r.Body.Close()
 
 	if r.StatusCode != http.StatusOK {
-		return noDiscussions, fmt.Errorf("cannot search Hacker News: `GET %s` responded with status code %d", r.Request.URL, r.StatusCode)
+		return noDiscussions, fmt.Errorf("GET %s` responded with unexpected status code %d", r.Request.URL, r.StatusCode)
 	}
 
 	var response HackerNewsResponse
