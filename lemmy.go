@@ -16,9 +16,9 @@ import (
 type LemmyResponse struct {
 	Posts []struct {
 		Post struct {
-			ID   int    `json:"id"`
 			Name string `json:"name"`
 			URL  string `json:"url"`
+			ID   int    `json:"id"`
 		} `json:"post"`
 		Counts struct {
 			Comments int `json:"comments"`
