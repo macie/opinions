@@ -31,7 +31,9 @@ func main() {
 		os.Exit(1)
 	}
 	if config.ShowVersion {
-		fmt.Fprint(os.Stderr, config.version())
+		if _, err := fmt.Fprintln(os.Stderr, config.version()); err != nil {
+			panic(err)
+		}
 		os.Exit(0)
 	}
 
