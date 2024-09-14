@@ -12,17 +12,17 @@ import (
 	"github.com/macie/opinions/internal/security"
 )
 
-// AppConfig represents current app configuration.
-type AppConfig struct {
+// appConfig represents current app configuration.
+type appConfig struct {
 	appVersion  string
 	Query       string
 	Timeout     time.Duration
 	ShowVersion bool
 }
 
-// NewAppConfig combines command line arguments and app version into AppConfig.
-func NewAppConfig(cliArgs []string, appVersion string) (AppConfig, error) {
-	config := AppConfig{
+// newAppConfig combines command line arguments and app version into AppConfig.
+func newAppConfig(cliArgs []string, appVersion string) (appConfig, error) {
+	config := appConfig{
 		appVersion: appVersion,
 	}
 	f := flag.NewFlagSet("opinions", flag.ContinueOnError)
@@ -38,15 +38,15 @@ func NewAppConfig(cliArgs []string, appVersion string) (AppConfig, error) {
 	}
 
 	if len(f.Args()) != 1 {
-		return AppConfig{}, fmt.Errorf("expected exactly 1 query but get %d: '%s'", len(f.Args()), strings.Join(f.Args(), "', '"))
+		return appConfig{}, fmt.Errorf("expected exactly 1 query but get %d: '%s'", len(f.Args()), strings.Join(f.Args(), "', '"))
 	}
 	config.Query = f.Args()[0]
 
 	return config, nil
 }
 
-// Version returns string with full version description.
-func (c *AppConfig) Version() string {
+// version returns string with full version description.
+func (c *appConfig) version() string {
 	ver := c.appVersion
 	if ver == "" {
 		ver = time.Now().Format("2006.01.02-dev150405")
@@ -58,8 +58,8 @@ func (c *AppConfig) Version() string {
 	return fmt.Sprintf("opinions %s%s\n", ver, build)
 }
 
-// NewAppContext creates cancellable app context with optional timeout.
-func NewAppContext(config AppConfig) (context.Context, context.CancelFunc) {
+// newAppContext creates cancellable app context with optional timeout.
+func newAppContext(config appConfig) (context.Context, context.CancelFunc) {
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
 
 	if config.Timeout != 0 {
