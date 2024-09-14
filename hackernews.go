@@ -18,8 +18,8 @@ type HackerNewsResponse struct {
 		CreatedAt   time.Time `json:"created_at"`
 		Title       string    `json:"title"`
 		URL         string    `json:"url"`
-		NumComments int       `json:"num_comments"`
 		ObjectID    string    `json:"objectID"`
+		NumComments int       `json:"num_comments"`
 	} `json:"hits"`
 }
 
