@@ -96,7 +96,7 @@ jobs:
         run: make opinions-linux_armv7
 
       - name: Run E2E tests inside VM
-        uses: pguyot/arm-runner-action@e04ca3becb581a2b52cabe31e53835ada344522f # v2.5.2
+        uses: pguyot/arm-runner-action@e1773de1ed6eb61848f5693de824d836f0b0ea25 # v2.6.5
         with:
           cpu: cortex-a7
           cpu_info: cpuinfo/raspberrypi_3b
@@ -146,7 +146,7 @@ jobs:
         run: make opinions-linux_arm64
 
       - name: Run E2E tests inside VM
-        uses: pguyot/arm-runner-action@e04ca3becb581a2b52cabe31e53835ada344522f # v2.5.2
+        uses: pguyot/arm-runner-action@e1773de1ed6eb61848f5693de824d836f0b0ea25 # v2.6.5
         with:
           cpu: cortex-a53
           cpu_info: cpuinfo/raspberrypi_zero2_w_arm64
