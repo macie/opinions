@@ -41,12 +41,13 @@ jobs:
 
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@cb605e52c26070c328afc4562f0b4ada7618a84e # v2.10.4
+        uses: step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0 # v2.12.0
         with:
           egress-policy: block
           allowed-endpoints: >
             api.github.com:443
             github.com:443
+            release-assets.githubusercontent.com:443
             objects.githubusercontent.com:443
             ppa.launchpadcontent.net:443
             packages.microsoft.com:443
@@ -54,25 +55,28 @@ jobs:
             motd.ubuntu.com:443
             esm.ubuntu.com:443
             proxy.golang.org:443
+            storage.googleapis.com:443
             sum.golang.org:443
             uploads.github.com:443
 
       - name: Checkout repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      
+
       - name: Setup OS
-        uses: awalsh128/cache-apt-pkgs-action@a6c3917cc929dd0345bfb2d3feaf9101823370ad # v1.4.2
-        with:
-          packages: libseccomp-dev
+#        uses: awalsh128/cache-apt-pkgs-action@a6c3917cc929dd0345bfb2d3feaf9101823370ad # v1.4.2
+#        with:
+#          packages: libseccomp-dev
+        run: sudo apt-get update && sudo apt-get install -y libseccomp-dev
 
       - name: Install Go
-        uses: actions/setup-go@f111f3307d8850f501ac008e886eec1fd1932a34 # v5.3.0
+        uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5 # v5.5.0
         with:
            go-version-file: go.mod
 
       # Initializes the CodeQL tools for scanning.
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@f079b8493333aace61c81488f8bd40919487bd9f # v3.25.7
+        uses: github/codeql-action/init@fca7ace96b7d713c7035871441bd52efbe39e27e #  v3.28.19
+
         with:
           languages: ${{ matrix.language }}
           # If you wish to specify custom queries, you can do so here or in a config file.
@@ -82,7 +86,7 @@ jobs:
       # Autobuild attempts to build any compiled languages  (C/C++, C#, or Java).
       # If this step fails, then you should remove it and run the build manually (see below)
       - name: Autobuild
-        uses: github/codeql-action/autobuild@f079b8493333aace61c81488f8bd40919487bd9f # v3.25.7
+        uses: github/codeql-action/autobuild@fca7ace96b7d713c7035871441bd52efbe39e27e #  v3.28.19
 
       # ℹ️ Command-line programs to run using the OS shell.
       # 📚 See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepsrun
@@ -95,6 +99,6 @@ jobs:
       #   ./location_of_script_within_repo/buildscript.sh
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@f079b8493333aace61c81488f8bd40919487bd9f # v3.25.7
+        uses: github/codeql-action/analyze@fca7ace96b7d713c7035871441bd52efbe39e27e #  v3.28.19
         with:
           category: "/language:${{matrix.language}}"
