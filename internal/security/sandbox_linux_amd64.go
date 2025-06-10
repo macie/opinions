@@ -24,13 +24,15 @@ func Sandbox() error {
 		// similar to stdio pledge
 		"clone3", "close", "epoll_create1", "epoll_ctl", "epoll_pwait",
 		"eventfd2", "exit_group", "fcntl", "fstat", "futex", "getpid",
-		"getrandom", "getsockopt", "gettid", "madvise", "mmap", "mprotect",
-		"munmap", "nanosleep", "pipe2", "read", "rseq", "rt_sigprocmask",
-		"rt_sigreturn", "sched_getaffinity", "sched_yield", "set_robust_list",
-		"setsockopt", "sigaltstack", "tgkill", "uname", "write",
+		"getrandom", "getsockopt", "gettid", "ioctl", "lseek", "madvise",
+		"mmap", "mprotect", "munmap", "nanosleep", "pipe2", "poll", "prctl",
+		"prlimit64", "read", "rseq", "rt_sigprocmask", "rt_sigreturn",
+		"sched_getaffinity", "sched_yield", "set_robust_list", "setsockopt",
+		"sigaltstack", "tgkill", "uname", "write",
 
 		// similar to inet pledge
-		"connect", "getpeername", "getsockname", "socket",
+		"bind", "connect", "getpeername", "getsockname", "recvfrom", "recvmsg",
+		"sendmmsg", "sendto", "socket",
 
 		// similar to rpath pledge
 		"getdents64", "newfstatat", "openat", "readlinkat",
