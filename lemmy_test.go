@@ -16,7 +16,7 @@ func ExampleSearchLemmy() {
 
 	fmt.Println(opinions[0])
 	// Output:
-	// Lemmy	https://lemmy.world/post/7563451	The Grug Brained Developer (2022)	https://grugbrain.dev/
+	// Lemmy	https://lemmy.world/post/24591938	The Grug Brained Developer - A manifesto	https://grugbrain.dev/
 }
 
 func ExampleSearchLemmy_unknown() {
